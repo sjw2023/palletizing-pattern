@@ -4,6 +4,7 @@ import com.wsapoa.dto.ReportRequestDTO;
 import com.wsapoa.entity.*;
 import com.wsapoa.repository.*;
 import com.wsapoa.utils.AbstractPattern;
+import com.wsapoa.utils.Block;
 import com.wsapoa.utils.Interlock;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.processing.SQL;
@@ -32,14 +33,28 @@ public class ReportService {
         long productVolume = product.getLength() * product.getWidth() * product.getHeight();
 
         ReportResult reportResult = new ReportResult();
-        AbstractPattern abstractPattern = new Interlock( product, pallet, pattern, container, false, reportRequestDTO.getMarginSetting(), reportRequestDTO.getExceedLengthSetting());
-        reportResult.setReportResultProducts(abstractPattern.calculatePatterns());
-        reportResult.setAreaEfficiency(abstractPattern.calcAreaEfficiency());
-        reportResult.setProductPerLayer(abstractPattern.calcProductPerLayer());
-        reportResult.setPalletPerContainer(abstractPattern.calcPalletPerContainer());
-        reportResult.setNumberOfLayers(abstractPattern.calcNumberOfLayers());
-        reportResult.setTotalProducts(abstractPattern.calcTotalProducts());
-        reportResult.setReportResultPallets(null);
-        reportResultRepository.save(reportResult);
+        AbstractPattern abstractPattern = null;
+        if(reportRequestDTO.getPatternType().equals("INTERLOCK")){
+            abstractPattern = new Interlock( product, pallet, pattern, container, false, reportRequestDTO.getMarginSetting(), reportRequestDTO.getExceedLengthSetting());
+        }
+        else if(reportRequestDTO.getPatternType().equals("BLOCK")){
+            abstractPattern = new Block( product, pallet, pattern, container, false, reportRequestDTO.getMarginSetting(), reportRequestDTO.getExceedLengthSetting());
+        }
+        else if(reportRequestDTO.getPatternType().equals("INTERLOCK_WITH_ROTATION")){
+            abstractPattern = new Interlock( product, pallet, pattern, container, true, reportRequestDTO.getMarginSetting(), reportRequestDTO.getExceedLengthSetting());
+        }
+        else if(reportRequestDTO.getPatternType().equals("BLOCK_WITH_ROTATION")){
+            abstractPattern = new Block( product, pallet, pattern, container, true, reportRequestDTO.getMarginSetting(), reportRequestDTO.getExceedLengthSetting());
+        }
+        if(abstractPattern != null){
+            reportResult.setReportResultProducts(abstractPattern.calculatePatterns());
+            reportResult.setAreaEfficiency(abstractPattern.calcAreaEfficiency());
+            reportResult.setProductPerLayer(abstractPattern.calcProductPerLayer());
+            reportResult.setPalletPerContainer(abstractPattern.calcPalletPerContainer());
+            reportResult.setNumberOfLayers(abstractPattern.calcNumberOfLayers());
+            reportResult.setTotalProducts(abstractPattern.calcTotalProducts());
+            reportResult.setReportResultPallets(null);
+            reportResultRepository.save(reportResult);
+        }
     }
 }

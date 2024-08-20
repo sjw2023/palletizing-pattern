@@ -17,4 +17,5 @@ public class ReportRequestDTO{
     private long patternId;
     private long marginSetting;
     private long exceedLengthSetting;
+    private String patternType;
 }

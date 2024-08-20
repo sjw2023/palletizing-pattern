@@ -18,6 +18,7 @@ public abstract class AbstractPattern extends ReportResult {
     protected long exceedLimit;
     protected long totalPatternLength;
     protected long totalPatternWidth;
+    protected long totalPatternHeight;
 
     public AbstractPattern(Product product,
                            Pallet pallet,
