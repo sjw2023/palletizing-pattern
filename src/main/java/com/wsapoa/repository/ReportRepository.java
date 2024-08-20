@@ -1,9 +1,9 @@
 package com.wsapoa.repository;
 
-import com.wsapoa.entity.Pallets;
+import com.wsapoa.entity.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PalletsRepository extends JpaRepository<Pallets, Long> {
+public interface ReportRepository extends JpaRepository<Report, Long> {
 }

@@ -1,7 +1,7 @@
 package com.wsapoa.controllers;
 
 import com.wsapoa.dto.ProductRequestDTO;
-import com.wsapoa.entity.Products;
+import com.wsapoa.entity.Product;
 import com.wsapoa.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +36,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Products> readProduct(@PathVariable Long id) {
-        Products product = productService.readProduct(id);
+    public ResponseEntity<Product> readProduct(@PathVariable Long id) {
+        Product product = productService.readProduct(id);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping
-    public ResponseEntity<List<Products>> getAllProducts() {
-        List<Products> products = productService.getAllProducts();
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
 }

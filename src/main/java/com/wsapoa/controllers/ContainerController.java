@@ -1,7 +1,7 @@
 package com.wsapoa.controllers;
 
 import com.wsapoa.dto.ContainerRequestDTO;
-import com.wsapoa.entity.Containers;
+import com.wsapoa.entity.Container;
 import com.wsapoa.services.ContainerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +36,14 @@ public class ContainerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Containers> readContainer(@PathVariable Long id) {
-        Containers container = containerService.readContainer(id);
+    public ResponseEntity<Container> readContainer(@PathVariable Long id) {
+        Container container = containerService.readContainer(id);
         return ResponseEntity.ok(container);
     }
 
     @GetMapping
-    public ResponseEntity<List<Containers>> getAllContainers() {
-        List<Containers> containers = containerService.getAllContainers();
+    public ResponseEntity<List<Container>> getAllContainers() {
+        List<Container> containers = containerService.getAllContainers();
         return ResponseEntity.ok(containers);
     }
 }

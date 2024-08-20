@@ -8,11 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "pallets")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Pallets {
+public class Pallet {
     @Id
     @GeneratedValue
     private long palletId;
@@ -22,7 +22,7 @@ public class Pallets {
     private long length;
     private boolean used;
 
-    public Pallets(PalletRequestDTO palletRequestDTO) {
+    public Pallet(PalletRequestDTO palletRequestDTO) {
         this.name = palletRequestDTO.getName();
         this.width = palletRequestDTO.getWidth();
         this.height = palletRequestDTO.getHeight();

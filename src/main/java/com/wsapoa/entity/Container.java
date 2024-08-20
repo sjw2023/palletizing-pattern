@@ -3,17 +3,16 @@ package com.wsapoa.entity;
 import com.wsapoa.dto.ContainerRequestDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "containers")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Containers {
+public class Container {
     @Id
     @GeneratedValue
     private long containerId;
@@ -24,7 +23,7 @@ public class Containers {
     private boolean used;
     private long containerVolume;
 
-    public Containers(ContainerRequestDTO containerRequestDTO) {
+    public Container(ContainerRequestDTO containerRequestDTO) {
         this.name = containerRequestDTO.getName();
         this.width = containerRequestDTO.getWidth();
         this.height = containerRequestDTO.getHeight();

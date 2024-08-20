@@ -3,17 +3,16 @@ package com.wsapoa.entity;
 import com.wsapoa.dto.ProductRequestDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "products")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Products {
+public class Product {
     @Id
     @GeneratedValue
     private long productId;
@@ -24,7 +23,7 @@ public class Products {
     private boolean used;
     private long productVolume;
 
-    public Products(ProductRequestDTO productRequestDTO) {
+    public Product(ProductRequestDTO productRequestDTO) {
         this.name = productRequestDTO.getName();
         this.width = productRequestDTO.getWidth();
         this.height = productRequestDTO.getHeight();

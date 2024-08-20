@@ -6,17 +6,17 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "patterns")
 @Getter
 @Setter
-public class Reports {
+public class Pattern {
     @Id
     @GeneratedValue
-    private long reportId;
-    private long reportResultId;
-    private long productId;
-    private long palletId;
-    private long containerId;
     private long patternId;
-    private String globalConfigurationSetting;
+    private String name;
+    private long width;
+    private long height;
+    private long length;
+    private boolean used;
+    private long patternVolume;
 }

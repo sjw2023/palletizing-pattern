@@ -1,8 +1,8 @@
 package com.wsapoa.services;
 
 import com.wsapoa.dto.PalletRequestDTO;
-import com.wsapoa.entity.Pallets;
-import com.wsapoa.repository.PalletsRepository;
+import com.wsapoa.entity.Pallet;
+import com.wsapoa.repository.PalletRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,32 +12,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PalletService {
 
-    private final PalletsRepository palletsRepository;
+    private final PalletRepository palletRepository;
 
     public void createPallet(PalletRequestDTO palletRequestDTO) {
-        Pallets pallet = new Pallets( palletRequestDTO );
-        palletsRepository.save(pallet);
+        Pallet pallet = new Pallet( palletRequestDTO );
+        palletRepository.save(pallet);
     }
 
     public void updatePallet(Long id, PalletRequestDTO palletRequestDTO) {
-        Pallets pallet = palletsRepository.findById(id).orElseThrow(() -> new RuntimeException("Pallet not found"));
+        Pallet pallet = palletRepository.findById(id).orElseThrow(() -> new RuntimeException("Pallet not found"));
         pallet.setName(palletRequestDTO.getName());
         pallet.setWidth(palletRequestDTO.getWidth());
         pallet.setHeight(palletRequestDTO.getHeight());
         pallet.setLength(palletRequestDTO.getLength());
         pallet.setUsed(palletRequestDTO.isUsed());
-        palletsRepository.save(pallet);
+        palletRepository.save(pallet);
     }
 
     public void deletePallet(Long id) {
-        palletsRepository.deleteById(id);
+        palletRepository.deleteById(id);
     }
 
-    public Pallets readPallet(Long id) {
-        return palletsRepository.findById(id).orElseThrow(() -> new RuntimeException("Pallet not found"));
+    public Pallet readPallet(Long id) {
+        return palletRepository.findById(id).orElseThrow(() -> new RuntimeException("Pallet not found"));
     }
 
-    public List<Pallets> getAllPallets() {
-        return palletsRepository.findAll();
+    public List<Pallet> getAllPallets() {
+        return palletRepository.findAll();
     }
 }

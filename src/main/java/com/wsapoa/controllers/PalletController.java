@@ -1,7 +1,7 @@
 package com.wsapoa.controllers;
 
 import com.wsapoa.dto.PalletRequestDTO;
-import com.wsapoa.entity.Pallets;
+import com.wsapoa.entity.Pallet;
 import com.wsapoa.services.PalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +36,14 @@ public class PalletController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pallets> readPallet(@PathVariable Long id) {
-        Pallets pallet = palletService.readPallet(id);
+    public ResponseEntity<Pallet> readPallet(@PathVariable Long id) {
+        Pallet pallet = palletService.readPallet(id);
         return ResponseEntity.ok(pallet);
     }
 
     @GetMapping
-    public ResponseEntity<List<Pallets>> getAllPallets() {
-        List<Pallets> pallets = palletService.getAllPallets();
+    public ResponseEntity<List<Pallet>> getAllPallets() {
+        List<Pallet> pallets = palletService.getAllPallets();
         return ResponseEntity.ok(pallets);
     }
 }
