@@ -1,27 +1,63 @@
+// src/main/java/com/wsapoa/entity/ReportResult.java
 package com.wsapoa.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity(name = "report_results")
 @Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReportResult {
     @Id
     @GeneratedValue
     private long reportResultId;
-    private long areaEfficiency;
+    private float patternAreaEfficiency;
     private long productPerLayer;
-    private long palletPerContainer;
+    private long numberOfPatternsInContainer;
+    private float containerAreaEfficiency;
     private long numberOfLayers;
     private long totalProducts;
-//    @OneToMany(mappedBy = "reportResult", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OneToMany(mappedBy = "reportResult", fetch=FetchType.EAGER, cascade = CascadeType.ALL) // (1)
-    List<ReportResultProduct> reportResultProducts;
-    @OneToMany(mappedBy = "reportResult", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ReportResultPallet> reportResultPallets;
+
+    @OneToMany(mappedBy = "reportResult", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ReportResultProduct> reportResultProducts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reportResult", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ReportResultPallet> reportResultPallets = new ArrayList<>();
+
+    public void addReportResultProduct(@NotNull ReportResultProduct reportResultProduct) {
+        if (reportResultProducts == null) {
+            reportResultProducts = new ArrayList<>();
+        }
+        reportResultProducts.add(reportResultProduct);
+        reportResultProduct.setReportResult(this);
+    }
+
+    public void removeReportResultProduct(@NotNull ReportResultProduct reportResultProduct) {
+        if (reportResultProducts != null) {
+            reportResultProducts.remove(reportResultProduct);
+            reportResultProduct.setReportResult(null);
+        }
+    }
+
+    public void addReportResultPallet(@NotNull ReportResultPallet reportResultPallet) {
+        if (reportResultPallets == null) {
+            reportResultPallets = new ArrayList<>();
+        }
+        reportResultPallets.add(reportResultPallet);
+        reportResultPallet.setReportResult(this);
+    }
+
+    public void removeReportResultPallet(@NotNull ReportResultPallet reportResultPallet) {
+        if (reportResultPallets != null) {
+            reportResultPallets.remove(reportResultPallet);
+            reportResultPallet.setReportResult(null);
+        }
+    }
 }

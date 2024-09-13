@@ -1,4 +1,4 @@
-package com.wsapoa.utils;
+package com.wsapoa.utils.pattern;
 
 public enum PatternType {
     BLOCK,

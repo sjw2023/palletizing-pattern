@@ -1,8 +1,8 @@
 package com.wsapoa.controllers;
 
 import com.wsapoa.dto.ReportRequestDTO;
+import com.wsapoa.entity.ReportResult;
 import com.wsapoa.services.ReportService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReportController {
     private final ReportService reportService;
     @PostMapping
-    public ResponseEntity<Void> createReport(@RequestBody ReportRequestDTO reportRequestDTO) {
-        reportService.createReport(reportRequestDTO);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ReportResult> createReport(@RequestBody ReportRequestDTO reportRequestDTO) {
+        var result = reportService.createReport(reportRequestDTO);
+        return ResponseEntity.ok(result);
     }
 }

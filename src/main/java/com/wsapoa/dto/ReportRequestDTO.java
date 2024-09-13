@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Getter
 @Setter
@@ -18,4 +17,5 @@ public class ReportRequestDTO{
     private long marginSetting;
     private long exceedLengthSetting;
     private String patternType;
+    private String ContainerType;
 }
