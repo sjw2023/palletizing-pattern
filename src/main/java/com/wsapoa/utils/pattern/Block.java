@@ -24,18 +24,20 @@ public class Block extends AbstractPattern {
 
     public Block(AbstractPattern abstractPattern) {
         super(abstractPattern);
+        this.patternType = abstractPattern.getPatternType();
     }
 
     public Block(
             Product product,
             Pallet pallet,
-            Pattern pattern,
             Container container,
+            String patternType,
             boolean rotate,
             long margin,
             long exceedLimit
     ) {
-        super(product, pallet, pattern, container, rotate, margin, exceedLimit);
+        super(product, pallet, container, rotate, margin, exceedLimit);
+        this.patternType = patternType;
     }
 
     @Override
@@ -78,19 +80,22 @@ public class Block extends AbstractPattern {
     @Override
     public List<ReportResultProduct> calculatePatterns() {
         BlockProductList blockProductList = new BlockProductList(productInfo, palletInfo);
-        long totalLength = this.calcProductInLength();
-        long totalWidth = this.calcProductInWidth();
+        long totalProductInLength = this.calcProductInLength();
+        long totalProductInWidth = this.calcProductInWidth();
         long width = this.productInfo.getLength();
         long length = this.productInfo.getWidth();
         long height = this.productInfo.getHeight();
+        this.actualPatternLength = totalProductInLength * (boxRotated ? width : length);
+        this.actualPatternWidth = totalProductInWidth * (boxRotated ? length : width);
+
         if (boxRotated) {
-            totalLength = this.calcRotatedProductInLength();
-            totalWidth = this.calcRotatedProductInWidth();
+            totalProductInLength = this.calcRotatedProductInLength();
+            totalProductInWidth = this.calcRotatedProductInWidth();
             width = this.productInfo.getWidth();
             length = this.productInfo.getLength();
         }
-        for (int i = 0; i < totalWidth; i++) {
-            for (int j = 0; j < totalLength; j++) {
+        for (int i = 0; i < totalProductInWidth; i++) {
+            for (int j = 0; j < totalProductInLength; j++) {
                 blockProductList.addProductAreaInfo(new ObjectAreaInfo(
                         productInfo,
                         new Coordinate(

@@ -16,10 +16,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Spiral extends AbstractPattern{
     public Spiral(AbstractPattern abstractPattern) {
         super(abstractPattern);
+        this.patternType = abstractPattern.getPatternType();
     }
 
-    public Spiral(Product product, Pallet pallet, Pattern pattern, Container container, boolean rotate, long margin, long exceedLimit) {
-        super(product, pallet, pattern, container, rotate, margin, exceedLimit);
+    public Spiral(Product product, Pallet pallet, Container container, String patternType, boolean rotate, long margin, long exceedLimit) {
+        super(product, pallet, container, rotate, margin, exceedLimit);
+        this.patternType = patternType;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class Spiral extends AbstractPattern{
         lastProductAreaInfo = spiralProductList.getLastProductAreaInfo();
         for (int i = 0; i < productInWidth; i++) {
             spiralProductList.addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
-                    .x((int) ((int) (lastProductAreaInfo.getEnd().getX() - productInfo.getWidth() / 2 - (i) * productInfo.getWidth())))
+                    .x(((int) (lastProductAreaInfo.getEnd().getX() - productInfo.getWidth() / 2 - (i) * productInfo.getWidth())))
                     .y((int) ((int) (lastProductAreaInfo.getEnd().getY()) + productInfo.getLength() / 2))
                     .z((int) (productInfo.getHeight() / 2))
                     .build(), true));
@@ -72,7 +74,7 @@ public class Spiral extends AbstractPattern{
         lastProductAreaInfo = spiralProductList.getLastProductAreaInfo();
         for (int i = 0; i < productInWidth; i++) {
             spiralProductList.addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
-                    .x((int) ((int) (lastProductAreaInfo.getOrigin().getX() - productInfo.getLength() / 2)))
+                    .x(((int) (lastProductAreaInfo.getOrigin().getX() - productInfo.getLength() / 2)))
                     .y((int) ((int) (lastProductAreaInfo.getEnd().getY() - productInfo.getWidth() / 2) - i * productInfo.getWidth()))
                     .z(productInfo.getHeight() / 2)
                     .build(), false));
@@ -89,9 +91,7 @@ public class Spiral extends AbstractPattern{
 //        }
         spiralProductList.addLayers( calcNumberOfLayers() );
         spiralProductList.getMap().forEach(
-                productAreaInfo -> {
-                    products.add(new ReportResultProduct(productAreaInfo, orderIndex.getAndIncrement()));
-                }
+                productAreaInfo -> products.add(new ReportResultProduct(productAreaInfo, orderIndex.getAndIncrement()))
         );
         return products;
     }

@@ -27,7 +27,6 @@ import java.util.List;
  *      - | -
  *      | - -
  *      - - |
- *
  *      이후 공간이 되는대로 추가적으로 더해준다면 다음과 같은 것이다
  *       - | - -
  *  *    | - - -
@@ -49,9 +48,11 @@ import java.util.List;
 public class Diagonal extends AbstractPattern{
     public Diagonal(AbstractPattern abstractPattern) {
         super(abstractPattern);
+        this.patternType = abstractPattern.getPatternType();
     }
-    public Diagonal(Product product, Pallet pallet, Pattern pattern, Container container, boolean rotate, long margin, long exceedLimit) {
-        super(product, pallet, pattern, container, rotate, margin, exceedLimit);
+    public Diagonal(Product product, Pallet pallet, Container container, String patternType, boolean rotate, long margin, long exceedLimit) {
+        super(product, pallet, container, rotate, margin, exceedLimit);
+        this.patternType = patternType;
     }
 
     @Override
@@ -133,7 +134,7 @@ public class Diagonal extends AbstractPattern{
         return true;
     }
 
-    private boolean addOuterProducts(DiagonalProductList diagonalProductList, int outerLevel){
+    private void addOuterProducts(DiagonalProductList diagonalProductList, int outerLevel){
         var totalNumberOfProducts = outerLevel*2+3;
         var mid = totalNumberOfProducts/2;
         var firstProductIndexOfLastOuterLayer = Math.pow(outerLevel, 2);
@@ -189,7 +190,7 @@ public class Diagonal extends AbstractPattern{
                 }
             }
         }
-        return true;
+//        return true;
     }
 
     //TODO : Check bug, number can be smaller than what we want because of type casting

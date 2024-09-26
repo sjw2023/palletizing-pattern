@@ -11,39 +11,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductService implements BaseService<Product, Long, ProductRequestDTO> {
+    private final ProductRepository productRepository;
     @Override
     public void create(ProductRequestDTO productRequestDTO) {
-
-    }
-
-    @Override
-    public void update(Long aLong, ProductRequestDTO productRequestDTO) {
-
-    }
-
-    @Override
-    public void delete(Long aLong) {
-
-    }
-
-    @Override
-    public Product read(Long aLong) {
-        return null;
-    }
-
-    @Override
-    public List<Product> getAll() {
-        return List.of();
-    }
-
-    private final ProductRepository productRepository;
-
-    public void createProduct(ProductRequestDTO productRequestDTO) {
         Product product = new Product(productRequestDTO);
         productRepository.save(product);
     }
 
-    public void updateProduct(Long id, ProductRequestDTO productRequestDTO) {
+    @Override
+    public void update(Long id, ProductRequestDTO productRequestDTO) {
         Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
         product.setName(productRequestDTO.getName());
         product.setWidth(productRequestDTO.getWidth());
@@ -54,15 +30,18 @@ public class ProductService implements BaseService<Product, Long, ProductRequest
         productRepository.save(product);
     }
 
-    public void deleteProduct(Long id) {
+    @Override
+    public void delete(Long id) {
         productRepository.deleteById(id);
     }
 
-    public Product readProduct(Long id) {
+    @Override
+    public Product read(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
-    public List<Product> getAllProducts() {
+    @Override
+    public List<Product> getAll() {
         return productRepository.findAll();
     }
 }

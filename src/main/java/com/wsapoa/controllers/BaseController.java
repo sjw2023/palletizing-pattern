@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-
+//TODO : Have end-points to return DTO as its response
 public abstract class BaseController<T, ID, DTO> {
 
     protected abstract BaseService<T, ID, DTO> getService();

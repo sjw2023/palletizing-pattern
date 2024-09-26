@@ -12,11 +12,10 @@ import java.util.List;
 public abstract class AbstractPattern extends ReportResult {
     protected Product productInfo;
     protected Pallet palletInfo;
-    protected Pattern patternInfo;
     protected Container containerInfo;
     protected Coordinate center;
-    protected Coordinate origin;
-    protected Coordinate end;
+//    protected Coordinate origin;
+//    protected Coordinate end;
     protected boolean rotate;
     protected long margin;
     protected long exceedLimit;
@@ -24,12 +23,15 @@ public abstract class AbstractPattern extends ReportResult {
     protected long totalPatternWidth;
     protected long totalPatternHeight;
     protected float actualPatternVolume;
+    //TODO : Implement to use this Diagonal, InterLock, Spiral
+    protected long actualPatternLength;
+    protected long actualPatternWidth;
+    protected long actualPatternHeight;
 
     //TODO : Add origin and end
     public AbstractPattern(AbstractPattern abstractPattern){
         this.productInfo = abstractPattern.productInfo;
         this.palletInfo = abstractPattern.palletInfo;
-        this.patternInfo = abstractPattern.patternInfo;
         this.containerInfo = abstractPattern.containerInfo;
         this.rotate = abstractPattern.rotate;
         this.margin = abstractPattern.margin;
@@ -37,13 +39,18 @@ public abstract class AbstractPattern extends ReportResult {
         this.totalPatternHeight = abstractPattern.totalPatternHeight;
         this.totalPatternLength = abstractPattern.totalPatternLength;
         this.totalPatternWidth = abstractPattern.totalPatternWidth;
+        this.actualPatternVolume = abstractPattern.actualPatternVolume;
+        this.actualPatternLength = abstractPattern.actualPatternLength;
+        this.actualPatternWidth = abstractPattern.actualPatternWidth;
+        this.actualPatternHeight = abstractPattern.actualPatternHeight;
+        this.patternType = abstractPattern.patternType;
         this.center = abstractPattern.center;
     }
 
+    //TODO : Update Super in each pattern ctor
     public AbstractPattern(
             Product product,
             Pallet pallet,
-            Pattern pattern,
             Container container,
             boolean rotate,
             long margin,
@@ -51,18 +58,22 @@ public abstract class AbstractPattern extends ReportResult {
     ) {
         this.productInfo = product;
         this.palletInfo = pallet;
-        this.patternInfo = pattern;
         this.containerInfo = container;
         this.rotate = rotate;
         this.margin = margin;
         this.exceedLimit = exceedLimit;
-        this.totalPatternHeight = patternInfo.getHeight();
+        this.totalPatternHeight = containerInfo.getHeight();
         this.totalPatternLength = calcTotalPatternLength();
         this.totalPatternWidth = calcTotalPatternWidth();
     }
 
+//    public long calcActualPatternHeight(){
+//        this.actualPatternHeight = calcNumberOfLayers()*productInfo.getHeight()+palletInfo.getHeight();
+//        return this.actualPatternHeight;
+//    }
+
     public long calcNumberOfLayers(){
-        return (patternInfo.getHeight() - palletInfo.getHeight()) / productInfo.getHeight();
+        return (containerInfo.getHeight() - palletInfo.getHeight()) / productInfo.getHeight();
     }
 
     public long calcTotalProducts(){
@@ -83,12 +94,12 @@ public abstract class AbstractPattern extends ReportResult {
     //TODO : Add pallet volume to calculation
     public float calcAreaEfficiency() {
         this.actualPatternVolume = calcTotalProducts() * productInfo.getProductVolume();
-        var patternVolume = (patternInfo.getHeight()-palletInfo.getHeight())* palletInfo.getWidth() * palletInfo.getLength();
-        return ((float)actualPatternVolume / (float)patternVolume) * 100F;
+        var patternVolume = (containerInfo.getHeight()-palletInfo.getHeight())* palletInfo.getWidth() * palletInfo.getLength();
+        return (actualPatternVolume / (float)patternVolume) * 100F;
     }
 
     public float getPatternVolume(){
-        return (patternInfo.getHeight()-palletInfo.getHeight())* totalPatternWidth * totalPatternLength;
+        return (containerInfo.getHeight()-palletInfo.getHeight())* totalPatternWidth * totalPatternLength;
     }
 
     abstract public long calcProductPerLayer();

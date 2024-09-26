@@ -24,9 +24,6 @@ public class Report {
     private long exceedLengthSetting;
 
     public Report(ReportRequestDTO reportRequestDTO) {
-        this.containerId = reportRequestDTO.getContainerId();
-        this.palletId = reportRequestDTO.getPalletId();
-        this.patternId = reportRequestDTO.getPatternId();
         this.productId = reportRequestDTO.getProductId();
         this.exceedLengthSetting = reportRequestDTO.getExceedLengthSetting();
         this.marginSetting = reportRequestDTO.getMarginSetting();

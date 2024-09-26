@@ -10,12 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReportRequestDTO{
-    private long palletId;
     private long productId;
-    private long containerId;
-    private long patternId;
     private long marginSetting;
     private long exceedLengthSetting;
-    private String patternType;
     private String ContainerType;
 }

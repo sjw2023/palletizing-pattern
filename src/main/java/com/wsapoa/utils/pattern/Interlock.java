@@ -3,6 +3,7 @@ package com.wsapoa.utils.pattern;
 import com.wsapoa.entity.*;
 import com.wsapoa.utils.container.InterlockProductList;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -20,15 +21,17 @@ public class Interlock extends AbstractPattern {
     long productsInRestOfTheRowsInWidth;
     long productsInRestOfTheRowsInLength;
 
-    public Interlock(AbstractPattern abstractPattern) {
+    public Interlock(@NotNull AbstractPattern abstractPattern) {
         super(abstractPattern);
+        this.patternType = abstractPattern.getPatternType();
         calcTopRow();
         calcBelowCol();
         calcBelowRow();
     }
 
-    public Interlock(Product product, Pallet pallet, Pattern pattern, Container container, boolean rotate, long margin, long exceedLimit) {
-        super(product, pallet, pattern, container, rotate, margin, exceedLimit);
+    public Interlock(Product product, Pallet pallet, Container container, String patternType, boolean rotate, long margin, long exceedLimit) {
+        super(product, pallet, container, rotate, margin, exceedLimit);
+        this.patternType = patternType;
         calcTopRow();
         calcBelowCol();
         calcBelowRow();
@@ -91,7 +94,7 @@ public class Interlock extends AbstractPattern {
             for (int j = 0; j < this.productsInRestOfTheRowsInWidth; j++) {
                 for (int i = 0; i < this.productsInRestOfTheRowsInLength; i++) {
                     if (j == 0 && i == 0) {
-                        boolean b = interlockProductList.addFirstProductAreaInfo(true);
+                        interlockProductList.addFirstProductAreaInfo(true);
                     } else if (i == 0 && j > 0) {
                         //TODO : Change to use find last ith product version
                         interlockProductList.addIncreasedYFromCenter(productInfo.getLength(), true);
@@ -115,7 +118,7 @@ public class Interlock extends AbstractPattern {
             for (int j = 0; j < this.productsInRestOfTheRowsInWidth; j++) {
                 for (int i = 0; i < this.productsInRestOfTheRowsInLength; i++) {
                     if (j == 0 && i == 0) {
-                        boolean b = interlockProductList.addFirstProductAreaInfo(false);
+                        interlockProductList.addFirstProductAreaInfo(false);
                     } else if (i == 0 && j > 0) {
                         interlockProductList.addIncreasedXFromCenterFromIthProduct(this.productsInRestOfTheRowsInLength, productInfo.getLength(), false);
                     } else {
