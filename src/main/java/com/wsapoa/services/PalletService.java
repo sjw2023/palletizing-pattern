@@ -10,7 +10,38 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PalletService {
+public class PalletService implements BaseService<Pallet, Long, PalletRequestDTO> {
+    @Override
+    public void create(PalletRequestDTO palletRequestDTO) {
+        Pallet pallet = new Pallet( palletRequestDTO );
+        palletRepository.save(pallet);
+    }
+
+    @Override
+    public void update(Long id, PalletRequestDTO palletRequestDTO) {
+        Pallet pallet = palletRepository.findById(id).orElseThrow(() -> new RuntimeException("Pallet not found"));
+        pallet.setName(palletRequestDTO.getName());
+        pallet.setWidth(palletRequestDTO.getWidth());
+        pallet.setHeight(palletRequestDTO.getHeight());
+        pallet.setLength(palletRequestDTO.getLength());
+        pallet.setUsed(palletRequestDTO.isUsed());
+        palletRepository.save(pallet);
+    }
+
+    @Override
+    public void delete(Long id) {
+        palletRepository.deleteById(id);
+    }
+
+    @Override
+    public Pallet read(Long id) {
+        return palletRepository.findById(id).orElseThrow(() -> new RuntimeException("Pallet not found"));
+    }
+
+    @Override
+    public List<Pallet> getAll() {
+        return palletRepository.findAll();
+    }
 
     private final PalletRepository palletRepository;
 

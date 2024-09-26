@@ -15,7 +15,32 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
-public class ReportService {
+public class ReportService implements BaseService<ReportResult, Long, ReportRequestDTO> {
+    @Override
+    public void create(ReportRequestDTO reportRequestDTO) {
+        createReport(reportRequestDTO);
+    }
+
+    @Override
+    public void update(Long aLong, ReportRequestDTO reportRequestDTO) {
+
+    }
+
+    @Override
+    public void delete(Long aLong) {
+
+    }
+
+    @Override
+    public ReportResult read(Long aLong) {
+        return null;
+    }
+
+    @Override
+    public List<ReportResult> getAll() {
+        return List.of();
+    }
+
     private final ReportRepository reportRepository;
     private final PalletRepository palletRepository;
     private final ProductRepository productRepository;
@@ -102,7 +127,6 @@ public class ReportService {
         });
         return reportResultPallets;
     }
-
     private ReportResult buildReportResult(AbstractPattern abstractPattern, ContainerList containerList) {
         return ReportResult.builder()
                 .numberOfLayers(abstractPattern.calcNumberOfLayers())

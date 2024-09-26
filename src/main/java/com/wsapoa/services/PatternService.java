@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PatternService {
+public class PatternService implements BaseService<Pattern, Long, Pattern> {
 
     private final PatternRepository patternRepository;
 
@@ -19,5 +19,30 @@ public class PatternService {
 
     public List<Pattern> getAllPatterns() {
         return patternRepository.findAll();
+    }
+
+    @Override
+    public void create(Pattern pattern) {
+
+    }
+
+    @Override
+    public void update(Long aLong, Pattern pattern) {
+
+    }
+
+    @Override
+    public void delete(Long aLong) {
+
+    }
+
+    @Override
+    public Pattern read(Long aLong) {
+        return null;
+    }
+
+    @Override
+    public List<Pattern> getAll() {
+        return List.of();
     }
 }

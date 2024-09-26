@@ -10,7 +10,31 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService {
+public class ProductService implements BaseService<Product, Long, ProductRequestDTO> {
+    @Override
+    public void create(ProductRequestDTO productRequestDTO) {
+
+    }
+
+    @Override
+    public void update(Long aLong, ProductRequestDTO productRequestDTO) {
+
+    }
+
+    @Override
+    public void delete(Long aLong) {
+
+    }
+
+    @Override
+    public Product read(Long aLong) {
+        return null;
+    }
+
+    @Override
+    public List<Product> getAll() {
+        return List.of();
+    }
 
     private final ProductRepository productRepository;
 

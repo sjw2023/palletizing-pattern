@@ -110,8 +110,8 @@ function ContainerCanvas() {
             const productDimensions = productResponse.data;
             const containerResponse = await axios.get('http://localhost:8080/api/containers/1');
 
-            const patternTypes= ["INTERLOCK"];
-            // const patternTypes = ["DIAGONAL", "SPIRAL", "BLOCK", "INTERLOCK"];
+            // const patternTypes= ["INTERLOCK"];
+            const patternTypes = ["DIAGONAL", "SPIRAL", "BLOCK", "INTERLOCK"];
             const boxStateSetters = [setBoxesDiagonal, setBoxesSpiral, setBoxesBlock, setBoxesInterlock];
             let reportResponse;
             for (let i = 0; i < patternTypes.length; i++) {
