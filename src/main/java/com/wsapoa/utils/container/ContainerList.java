@@ -18,7 +18,6 @@ public class ContainerList {
     private List<AbstractPattern> patterns;
     private float containerVolumeLeft;
     private float containerLengthLeft;
-    private float containerWidthLeft;
     private float areaEfficiency;
     private ObjectAreaInfo containerAreaInfo;
 
@@ -38,8 +37,8 @@ public class ContainerList {
 //    }
 
 //    private void initializePattern(@NotNull AbstractPattern pattern) {
-//        var x = pattern.isRotate()? pattern.getTotalPatternWidth() : pattern.getTotalPatternLength();
-//        var y = pattern.isRotate()? pattern.getTotalPatternLength() : pattern.getTotalPatternWidth();
+//        var x = pattern.isRotate()? pattern.getActualPatternWidth() : pattern.getActualPatternLength();
+//        var y = pattern.isRotate()? pattern.getActualPatternLength() : pattern.getActualPatternWidth();
 //        pattern.setCenter(new Coordinate(x / 2, y / 2, pattern.getTotalPatternHeight() / 2));
 //        this.patterns.add(pattern);
 //        this.containerVolumeLeft -= pattern.getPatternVolume();
@@ -47,36 +46,34 @@ public class ContainerList {
 //    }
 
     public boolean isSpaceLeft(@NotNull AbstractPattern pattern) {
-        return containerVolumeLeft > pattern.getPatternVolume();
+        return containerVolumeLeft > pattern.calcActualPatternVolume();
     }
 
-//    public boolean isPatternFitInContainer(@NotNull AbstractPattern pattern) {
-//        return containerInfo.getHeight() > pattern.calcActualPatternHeight() && containerInfo.getWidth() > pattern.getTotalPatternWidth();
-//    }
-
-    public void addPattern(@NotNull AbstractPattern pattern, boolean rotate, int index) {
+    public boolean isPatternFitInContainer(@NotNull AbstractPattern pattern) {
+        return containerInfo.getWidth() > pattern.getActualPatternWidth();
+    }
+    public boolean addPattern(@NotNull AbstractPattern pattern, boolean rotate, int index) {
 //        if (!isPatternFitInContainer(pattern)) return false;
-
         pattern.calcAreaEfficiency();
-        adjustContainerLengthLeft(pattern, rotate, index);
+        assert containerLengthLeft >= pattern.getActualPatternLength() || containerLengthLeft >= pattern.getActualPatternWidth() : "Container length is exceeded";
+        assert containerVolumeLeft >= pattern.calcTotalPatternVolume() : "Container volume is exceeded";
         setPatternPosition(pattern, rotate, index);
-
-        assert containerLengthLeft >= pattern.getTotalPatternLength() || containerLengthLeft >= pattern.getTotalPatternWidth() : "Container length is exceeded";
-        assert containerVolumeLeft >= pattern.getPatternVolume() : "Container volume is exceeded";
-
         this.patterns.add(pattern);
-        containerVolumeLeft -= pattern.getPatternVolume();
-//        return true;
+        adjustContainerLengthLeft(pattern, rotate, index);
+        containerVolumeLeft -= pattern.getPatterVolume();
+        return true;
     }
 
     private void adjustContainerLengthLeft(AbstractPattern pattern, boolean rotate, int index) {
         if (patterns.isEmpty() || patterns.size() == 1) {
             if (index == 0) {
-                containerLengthLeft -= !rotate ? pattern.getTotalPatternWidth() : pattern.getTotalPatternLength();
+                containerLengthLeft -= rotate ? pattern.getPatternWidth() : pattern.getPatternLength();
+//                containerLengthLeft -= pattern.getActualPatternLength();
             }
         } else {
             if (index == 0) {
-                containerLengthLeft -= !rotate ? pattern.getTotalPatternWidth() : pattern.getTotalPatternLength();
+                containerLengthLeft -= rotate ? pattern.getPatternWidth() : pattern.getPatternLength();
+//                containerLengthLeft -= pattern.getActualPatternLength();
             }
         }
     }
@@ -90,31 +87,31 @@ public class ContainerList {
     }
 
     private void setFirstPatternPosition(@NotNull AbstractPattern pattern, boolean rotate, int index) {
-        float xStart = !rotate ? (float) pattern.getTotalPatternWidth() / 2 : (float) pattern.getTotalPatternLength() / 2;
-        float increaseFactor = !rotate ? pattern.getTotalPatternLength() : pattern.getTotalPatternWidth();
-        pattern.setCenter(new Coordinate((long) (xStart + index * increaseFactor), pattern.getTotalPatternWidth() / 2, pattern.getTotalPatternHeight() / 2));
+        float xStart = rotate ? (float) pattern.getPatternWidth()/ 2 : (float) pattern.getPatternLength() / 2;
+        float increaseFactor = rotate ? pattern.getPatternLength() : pattern.getPatternWidth();
+        pattern.setCenter(new Coordinate((long) (xStart + index * increaseFactor), pattern.getPatternWidth() / 2, pattern.getTotalPatternHeight() / 2));
         pattern.setRotate(rotate);
     }
 
     private void setSubsequentPatternPosition(@NotNull AbstractPattern pattern, boolean rotate, int index) {
-        int numOfPatternsInWidth = (int) (containerInfo.getWidth() / pattern.getTotalPatternWidth());
-        AbstractPattern lastPattern = patterns.getLast();
+        int numOfPatternsInWidth = rotate ? (int) (containerInfo.getWidth() / pattern.getPatternLength()) :(int) (containerInfo.getWidth() / pattern.getPatternWidth());
+        AbstractPattern lastPattern = patterns.get(patterns.size() - 1);
         if (index == 0) {
             lastPattern = patterns.get(patterns.size() - numOfPatternsInWidth);
-            pattern.setCenter(new Coordinate(lastPattern.getCenter().getX(), lastPattern.getCenter().getY() + pattern.getTotalPatternLength(), lastPattern.getCenter().getZ()));
+            pattern.setCenter(new Coordinate(lastPattern.getCenter().getX(), lastPattern.getCenter().getY() + pattern.getPatternLength(), lastPattern.getCenter().getZ()));
         } else {
-            pattern.setCenter(new Coordinate(lastPattern.getCenter().getX() + index * pattern.getTotalPatternWidth(), lastPattern.getCenter().getY(), lastPattern.getCenter().getZ()));
+            pattern.setCenter(new Coordinate(lastPattern.getCenter().getX() + index * pattern.getPatternWidth(), lastPattern.getCenter().getY(), lastPattern.getCenter().getZ()));
         }
         pattern.setRotate(rotate);
     }
 
     public boolean isLengthLeft(@NotNull AbstractPattern pattern) {
-        return !pattern.isRotate() ? containerLengthLeft >= pattern.getTotalPatternWidth() : containerLengthLeft >= pattern.getTotalPatternLength();
+        return pattern.isRotate() ? containerLengthLeft >= pattern.getPatternWidth() : containerLengthLeft >= pattern.getPatternLength();
     }
 
     public float calcAreaEfficiency() {
         float patternArea = patterns.stream()
-                .map(AbstractPattern::getActualPatternVolume)
+                .map(AbstractPattern::getPatterVolume)
                 .reduce(0f, Float::sum);
         this.areaEfficiency = (patternArea / containerInfo.getContainerVolume()) * 100f;
         return this.areaEfficiency;

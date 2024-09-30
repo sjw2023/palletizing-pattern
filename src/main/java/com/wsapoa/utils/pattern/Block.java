@@ -25,6 +25,9 @@ public class Block extends AbstractPattern {
     public Block(AbstractPattern abstractPattern) {
         super(abstractPattern);
         this.patternType = abstractPattern.getPatternType();
+        this.actualPatternVolume = abstractPattern.getActualPatternVolume();
+        this.actualPatternLength = abstractPattern.getActualPatternLength();
+        this.actualPatternWidth = abstractPattern.getActualPatternWidth();
     }
 
     public Block(
@@ -38,6 +41,9 @@ public class Block extends AbstractPattern {
     ) {
         super(product, pallet, container, rotate, margin, exceedLimit);
         this.patternType = patternType;
+        this.actualPatternLength = calcActualPatternLength();
+        this.actualPatternWidth = calcActualPatternWidth();
+        this.actualPatternVolume = calcActualPatternVolume();
     }
 
     @Override
@@ -85,8 +91,6 @@ public class Block extends AbstractPattern {
         long width = this.productInfo.getLength();
         long length = this.productInfo.getWidth();
         long height = this.productInfo.getHeight();
-        this.actualPatternLength = totalProductInLength * (boxRotated ? width : length);
-        this.actualPatternWidth = totalProductInWidth * (boxRotated ? length : width);
 
         if (boxRotated) {
             totalProductInLength = this.calcRotatedProductInLength();
@@ -94,6 +98,8 @@ public class Block extends AbstractPattern {
             width = this.productInfo.getWidth();
             length = this.productInfo.getLength();
         }
+        this.actualPatternLength = totalProductInLength * (boxRotated ? width : length);
+        this.actualPatternWidth = totalProductInWidth * (boxRotated ? length : width);
         for (int i = 0; i < totalProductInWidth; i++) {
             for (int j = 0; j < totalProductInLength; j++) {
                 blockProductList.addProductAreaInfo(new ObjectAreaInfo(
@@ -109,5 +115,17 @@ public class Block extends AbstractPattern {
         }
         blockProductList.addLayers(calcNumberOfLayers());
         return blockProductList.copyProductToResult(blockProductList);
+    }
+
+    @Override
+    public long calcActualPatternLength() {
+        this.actualPatternLength = boxRotated ? calcRotatedProductInLength() * productInfo.getWidth() : calcProductInLength() * productInfo.getLength();
+        return this.actualPatternLength ;
+    }
+
+    @Override
+    public long calcActualPatternWidth() {
+        this.actualPatternLength = boxRotated ? calcRotatedProductInWidth() * productInfo.getLength() : calcProductInWidth() * productInfo.getWidth();
+        return this.actualPatternWidth;
     }
 }

@@ -49,10 +49,15 @@ public class Diagonal extends AbstractPattern{
     public Diagonal(AbstractPattern abstractPattern) {
         super(abstractPattern);
         this.patternType = abstractPattern.getPatternType();
+        this.actualPatternLength = abstractPattern.getActualPatternLength();
+        this.actualPatternWidth = abstractPattern.getActualPatternWidth();
+
     }
     public Diagonal(Product product, Pallet pallet, Container container, String patternType, boolean rotate, long margin, long exceedLimit) {
         super(product, pallet, container, rotate, margin, exceedLimit);
         this.patternType = patternType;
+        this.actualPatternLength = calcActualPatternLength();
+        this.actualPatternWidth = calcActualPatternWidth();
     }
 
     @Override
@@ -88,13 +93,34 @@ public class Diagonal extends AbstractPattern{
             DiagonalProductList diagonalProductList = new DiagonalProductList( productInfo, palletInfo );
             assert !addFirstRectanglePattern(diagonalProductList);
             addFirstRectanglePattern(diagonalProductList);
+
             for(int i =1; i <= calcNumberOfProductsInPalletLength(); i++){
-                addOuterProducts(diagonalProductList, i);
+                if(checkOuterPossible(i)){
+                    addOuterProducts(diagonalProductList, i);
+                }
             }
             diagonalProductList.addLayers(calcNumberOfLayers());
             return diagonalProductList.copyProductToResult(diagonalProductList);
         }
         return null;
+    }
+    private boolean checkOuterPossible(int outerLevel){
+        return outerLevel * productInfo.getLength() + productInfo.getWidth() < palletInfo.getWidth()
+                && outerLevel * productInfo.getWidth() + productInfo.getLength() < palletInfo.getLength();
+    }
+
+    //TODO : Check rotate.
+    //TODO : Something is wrong with the calculation of the number of productcs. the actual length and width is longer than the expected
+    @Override
+    public long calcActualPatternLength() {
+        this.actualPatternLength = calcNumberOfProductsInPalletLength() * productInfo.getWidth() + palletInfo.getWidth();
+        return this.actualPatternLength;
+    }
+
+    @Override
+    public long calcActualPatternWidth() {
+        this.actualPatternWidth = calcNumberOfProductsInPalletWidth() * productInfo.getLength() + palletInfo.getLength();
+        return this.actualPatternWidth;
     }
 
     private boolean addFirstRectanglePattern(DiagonalProductList diagonalProductList){
@@ -201,4 +227,6 @@ public class Diagonal extends AbstractPattern{
     private int calcNumberOfProductsInPalletWidth(){
         return (int) ((totalPatternWidth - productInfo.getLength()) / productInfo.getWidth())-1;
     }
+
+
 }

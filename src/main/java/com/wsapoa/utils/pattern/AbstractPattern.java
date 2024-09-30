@@ -5,6 +5,7 @@ import com.wsapoa.utils.shape.Coordinate;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.MathContext;
 import java.util.List;
 
 @Getter
@@ -14,7 +15,7 @@ public abstract class AbstractPattern extends ReportResult {
     protected Pallet palletInfo;
     protected Container containerInfo;
     protected Coordinate center;
-//    protected Coordinate origin;
+    //    protected Coordinate origin;
 //    protected Coordinate end;
     protected boolean rotate;
     protected long margin;
@@ -23,13 +24,12 @@ public abstract class AbstractPattern extends ReportResult {
     protected long totalPatternWidth;
     protected long totalPatternHeight;
     protected float actualPatternVolume;
-    //TODO : Implement to use this Diagonal, InterLock, Spiral
+    protected long actualPatternHeight;
     protected long actualPatternLength;
     protected long actualPatternWidth;
-    protected long actualPatternHeight;
 
     //TODO : Add origin and end
-    public AbstractPattern(AbstractPattern abstractPattern){
+    public AbstractPattern(AbstractPattern abstractPattern) {
         this.productInfo = abstractPattern.productInfo;
         this.palletInfo = abstractPattern.palletInfo;
         this.containerInfo = abstractPattern.containerInfo;
@@ -65,6 +65,8 @@ public abstract class AbstractPattern extends ReportResult {
         this.totalPatternHeight = containerInfo.getHeight();
         this.totalPatternLength = calcTotalPatternLength();
         this.totalPatternWidth = calcTotalPatternWidth();
+        this.actualPatternVolume = calcActualPatternVolume();
+        this.actualPatternHeight = calcNumberOfLayers() * productInfo.getHeight() + palletInfo.getHeight();
     }
 
 //    public long calcActualPatternHeight(){
@@ -72,36 +74,56 @@ public abstract class AbstractPattern extends ReportResult {
 //        return this.actualPatternHeight;
 //    }
 
-    public long calcNumberOfLayers(){
+    public long getPatternWidth(){
+        return Math.max(actualPatternWidth, totalPatternWidth);
+    }
+
+    public long getPatternLength(){
+        return Math.max(actualPatternLength, totalPatternLength);
+    }
+
+    public float getPatterVolume(){
+        return Math.min(actualPatternVolume, calcTotalPatternVolume());
+    }
+
+    public long calcNumberOfLayers() {
         return (containerInfo.getHeight() - palletInfo.getHeight()) / productInfo.getHeight();
     }
 
-    public long calcTotalProducts(){
+    public long calcTotalProducts() {
         return calcProductPerLayer() * calcNumberOfLayers();
     }
 
-    public long calcTotalPatternLength(){
+    public long calcTotalPatternLength() {
         totalPatternLength = palletInfo.getLength() + exceedLimit * 2;
         return totalPatternLength;
     }
 
-    public long calcTotalPatternWidth(){
+    public long calcTotalPatternWidth() {
         totalPatternWidth = palletInfo.getWidth() + exceedLimit * 2;
         return totalPatternWidth;
     }
 
-    //TODO : Add margin and exceedLimit to the calculation later
-    //TODO : Add pallet volume to calculation
-    public float calcAreaEfficiency() {
-        this.actualPatternVolume = calcTotalProducts() * productInfo.getProductVolume();
-        var patternVolume = (containerInfo.getHeight()-palletInfo.getHeight())* palletInfo.getWidth() * palletInfo.getLength();
-        return (actualPatternVolume / (float)patternVolume) * 100F;
+    public float calcTotalPatternVolume() {
+        return containerInfo.getHeight() * totalPatternWidth * totalPatternLength;
     }
 
-    public float getPatternVolume(){
-        return (containerInfo.getHeight()-palletInfo.getHeight())* totalPatternWidth * totalPatternLength;
+    public float calcActualPatternVolume() {
+        this.actualPatternVolume = calcTotalProducts() * productInfo.getProductVolume() + palletInfo.getHeight() * palletInfo.getWidth() * palletInfo.getLength();
+        return this.actualPatternVolume;
+    }
+
+    public float calcAreaEfficiency() {
+        var patternVolume = calcTotalPatternVolume();
+        this.actualPatternVolume = calcActualPatternVolume();
+        return (( this.actualPatternVolume) / patternVolume ) * 100F;
     }
 
     abstract public long calcProductPerLayer();
+
     abstract public List<ReportResultProduct> calculatePatterns();
+
+    abstract public long calcActualPatternLength();
+
+    abstract public  long calcActualPatternWidth();
 }

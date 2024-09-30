@@ -2,6 +2,8 @@ package com.wsapoa.utils.pattern;
 
 import com.wsapoa.entity.*;
 import com.wsapoa.utils.container.InterlockProductList;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -10,31 +12,33 @@ import java.util.List;
  * Interlock pattern 생성 클래스
  * 정의 : Interlock 패턴은 몸통으로 정의한 rotate된 product들을 Column 타입 패턴 처럼 쌓은뒤 rotate되지 않은 prroduct들이 한줄 생성되는 패턴이다
  * 예시 : - - - |
- * - - - |
- * - - - |
+ *       - - - |
+ *       - - - |
  * 편의상 rotate되지 않은 product를 topRow라고 정의, 나머지 rotate되지 않은 product를 restOfTheRows라고 정의하였다.
  */
 
 //TODO : Get optimized number of products in width and length
+    @Getter
+    @Setter
 public class Interlock extends AbstractPattern {
-    long theNumOfProductsInFirstRow;
-    long productsInRestOfTheRowsInWidth;
-    long productsInRestOfTheRowsInLength;
+    private long theNumOfProductsInFirstRow;
+    private long productsInRestOfTheRowsInWidth;
+    private long productsInRestOfTheRowsInLength;
 
     public Interlock(@NotNull AbstractPattern abstractPattern) {
         super(abstractPattern);
         this.patternType = abstractPattern.getPatternType();
-        calcTopRow();
-        calcBelowCol();
-        calcBelowRow();
+        ;
+        setNumbers();
+        this.actualPatternWidth = calcActualPatternWidth();
+        this.actualPatternLength = calcActualPatternLength();
     }
-
     public Interlock(Product product, Pallet pallet, Container container, String patternType, boolean rotate, long margin, long exceedLimit) {
         super(product, pallet, container, rotate, margin, exceedLimit);
         this.patternType = patternType;
-        calcTopRow();
-        calcBelowCol();
-        calcBelowRow();
+        setNumbers();
+        calcActualPatternLength();
+        calcActualPatternWidth();
     }
 
     @Override
@@ -56,8 +60,20 @@ public class Interlock extends AbstractPattern {
     private boolean isRotatedBetter() {
         long rotatedProducts = calcRotatedTopRow() + calcRotatedBelowRow() * calcRotatedBelowCol();
         long products = calcTopRow() + calcBelowRow() * calcBelowCol();
-//        return false;
         return rotatedProducts > products;
+    }
+
+    private void setNumbers() {
+        if (isRotatedBetter()) {
+            rotate = true;
+            calcRotatedBelowRow();
+            calcRotatedBelowCol();
+            calcRotatedTopRow();
+        } else {
+            calcBelowRow();
+            calcBelowCol();
+            calcTopRow();
+        }
     }
 
     private long calcRotatedBelowCol() {
@@ -112,9 +128,6 @@ public class Interlock extends AbstractPattern {
                 }
             }
         } else {
-            calcRotatedBelowRow();
-            calcRotatedBelowCol();
-            calcRotatedTopRow();
             for (int j = 0; j < this.productsInRestOfTheRowsInWidth; j++) {
                 for (int i = 0; i < this.productsInRestOfTheRowsInLength; i++) {
                     if (j == 0 && i == 0) {
@@ -137,5 +150,19 @@ public class Interlock extends AbstractPattern {
         }
         interlockProductList.addLayers(calcNumberOfLayers());
         return interlockProductList.copyProductToResult(interlockProductList);
+    }
+
+    //TODO : Need fix bug
+    @Override
+    public long calcActualPatternLength() {
+        this.actualPatternLength =
+                productInfo.getWidth() + this.productsInRestOfTheRowsInWidth * productInfo.getLength();
+        return this.actualPatternLength;
+    }
+
+    @Override
+    public long calcActualPatternWidth() {
+        this.actualPatternWidth = this.productsInRestOfTheRowsInLength * productInfo.getWidth();
+        return this.actualPatternWidth;
     }
 }

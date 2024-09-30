@@ -65,7 +65,9 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
 //                ReportResult reportResult = createReportResult(reportRequestDTO, product, pallet, pattern, containerInfo);
 //                report.addReportResult(reportResult);
                     ContainerList container = new ContainerList(containerInfo);
-                    fillContainerWithPatterns(container, abstractPattern);
+                    if( !fillContainerWithPatterns(container, abstractPattern) ){
+                        continue;
+                    }
                     List<ReportResultPallet> reportResultPallets = createReportResultPallets(container);
 
                     ReportResult reportResult = buildReportResult(abstractPattern, container, reportRequestDTO.getProductId(), pallet.getPalletId(), containerInfo.getContainerId());
@@ -107,13 +109,24 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
         };
     }
 
-    private void fillContainerWithPatterns(ContainerList containerList, AbstractPattern abstractPattern) {
+    private boolean fillContainerWithPatterns(ContainerList containerList, AbstractPattern abstractPattern) {
         while (containerList.isSpaceLeft(abstractPattern) && containerList.isLengthLeft(abstractPattern)) {
-            var numOfPatternsInWidth = containerList.getContainerInfo().getWidth() / abstractPattern.getTotalPatternWidth();
-            for (int i = 0; i < numOfPatternsInWidth; i++) {
-                containerList.addPattern(copyPattern(abstractPattern), abstractPattern.isRotate(), i);
+            var numOfPatternsInWidth = containerList.getContainerInfo().getWidth() / abstractPattern.getActualPatternWidth();
+            if(numOfPatternsInWidth == 0){
+                numOfPatternsInWidth = containerList.getContainerInfo().getWidth() / abstractPattern.getActualPatternLength();
+                if(numOfPatternsInWidth == 0){
+                    return false;
+                }
+                for(int i =0; i< numOfPatternsInWidth; i++){
+                    containerList.addPattern(copyPattern(abstractPattern), true, i);
+                }
+            }else{
+                for (int i = 0; i < numOfPatternsInWidth; i++) {
+                    containerList.addPattern(copyPattern(abstractPattern), abstractPattern.isRotate(), i);
+                }
             }
         }
+        return true;
     }
 
     private List<ReportResultPallet> createReportResultPallets(ContainerList containerList) {

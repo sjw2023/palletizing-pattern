@@ -13,15 +13,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 
 //TODO : Get optimized number of products in width and length
+//TODO : Think about how to change algorithm to use DFS
 public class Spiral extends AbstractPattern{
     public Spiral(AbstractPattern abstractPattern) {
         super(abstractPattern);
         this.patternType = abstractPattern.getPatternType();
+        this.actualPatternLength = calcActualPatternLength();
+        this.actualPatternWidth = calcActualPatternWidth();
+
     }
 
     public Spiral(Product product, Pallet pallet, Container container, String patternType, boolean rotate, long margin, long exceedLimit) {
         super(product, pallet, container, rotate, margin, exceedLimit);
         this.patternType = patternType;
+        this.actualPatternLength = calcActualPatternLength();
+        this.actualPatternWidth = calcActualPatternWidth();
     }
 
     @Override
@@ -79,20 +85,23 @@ public class Spiral extends AbstractPattern{
                     .z(productInfo.getHeight() / 2)
                     .build(), false));
         }
-        //TODO : Implement fill center if needed
 
-        //TODO : Implement with DFS later.
-//        while( spiralProductList.hasEnoughArea() ){
-//            var nextMove = spiralProductList.getAndPutNextMove();
-//            if( nextMove == null ){
-//                log.info("No more moves available");
-//                break;
-//            };
-//        }
         spiralProductList.addLayers( calcNumberOfLayers() );
         spiralProductList.getMap().forEach(
                 productAreaInfo -> products.add(new ReportResultProduct(productAreaInfo, orderIndex.getAndIncrement()))
         );
         return products;
+    }
+
+    @Override
+    public long calcActualPatternLength() {
+        this.actualPatternLength = calcProductInLength() * productInfo.getLength() + palletInfo.getWidth();
+        return this.actualPatternLength;
+    }
+
+    @Override
+    public long calcActualPatternWidth() {
+        this.actualPatternWidth = calcProductInWidth() * productInfo.getWidth() + palletInfo.getLength();
+        return this.totalPatternWidth;
     }
 }
