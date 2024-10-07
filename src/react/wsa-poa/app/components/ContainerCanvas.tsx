@@ -27,13 +27,15 @@ function extracted({reportResponse, productDimensions}: { reportResponse: any, p
 }
 
 function ContainerCanvas() {
+    const [pallets, setPallets] = useState([]);
+    const [error, setError] = useState(null);
     const [container, setContainer] = useState<Container>();
+
     const [boxesDiagonal, setBoxesDiagonal] = useState<Box[]>([]);
     const [boxesSpiral, setBoxesSpiral] = useState<Box[]>([]);
     const [boxesBlock, setBoxesBlock] = useState<Box[]>([]);
     const [boxesInterlock, setBoxesInterlock] = useState<Box[]>([]);
-    const [pallets, setPallets] = useState([]);
-    const [error, setError] = useState(null);
+
 
     useEffect(() => {
         fetchData();
@@ -51,12 +53,8 @@ function ContainerCanvas() {
             for (let i = 0; i < patternTypes.length; i++) {
                 reportResponse = await axios.post('http://localhost:8080/api/reports/createReport', {
                     productId: 1,
-                    palletId: 1,
-                    containerId: 1,
-                    patternId: 1,
                     marginSetting: 0,
                     exceedLengthSetting: 0,
-                    patternType: patternTypes[i]
                 });
                 const reportResult: ReportResult = reportResponse.data;
                 const adjustedBoxes = extracted({reportResponse: reportResponse, productDimensions: productDimensions});
@@ -80,7 +78,10 @@ function ContainerCanvas() {
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return (
+            <div>
+                <p> Error: {error} </p>
+            </div>);
     }
 
     if (!container) {
@@ -95,14 +96,14 @@ function ContainerCanvas() {
 
     const cameraPosition = new THREE.Vector3(3000, 2000, 3000);
     const zoom = 0.6;
-    const farFactor = 5000;
+    const farFactor = 20000;
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', width: '100vw', height: '100vh'}}>
             {/*<div>*/}
-                {/*<label style={{textAlign: 'center', fontSize: '20px'}}>Container</label>*/}
-                <CanvasSection boxes={boxesDiagonal} pallets={pallets} reducedDimensions={reducedDimensions}
-                               cameraPosition={cameraPosition} zoom={zoom} farFactor={farFactor}/>
+            {/*<label style={{textAlign: 'center', fo ntSize: '20px'}}>Container</label>*/}
+            <CanvasSection boxes={boxesDiagonal} pallets={pallets} reducedDimensions={reducedDimensions}
+                           cameraPosition={cameraPosition} zoom={zoom} farFactor={farFactor}/>
             {/*</div>*/}
             <CanvasSection boxes={boxesSpiral} pallets={pallets} reducedDimensions={reducedDimensions}
                            cameraPosition={cameraPosition} zoom={zoom} farFactor={farFactor}/>

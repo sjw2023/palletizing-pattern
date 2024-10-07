@@ -1,10 +1,13 @@
-import React, { useEffect, useRef } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import * as THREE from "three";
 import { Text } from "@react-three/drei";
 
 function BoxDraw({ center, dimensions, rotate, orderIndex, color }: { center: number[], dimensions: [number, number, number], rotate: boolean, orderIndex?: number, color: string }) {
-    const meshRef = useRef<THREE.Mesh>(null);
+    const meshRef = useRef<THREE.Mesh>(null)
+    ;
+    const [ data, setData] = useState<any>();
     const edgesRef = useRef<THREE.LineSegments>(null);
+    const [hovered, setHovered] = React.useState(false);
 
     useEffect(() => {
         if (meshRef.current) {
@@ -19,9 +22,14 @@ function BoxDraw({ center, dimensions, rotate, orderIndex, color }: { center: nu
 
     return (
         <group position={new THREE.Vector3(center[0], center[1], center[2])}>
-            <mesh ref={meshRef} frustumCulled={false}>
+            <mesh
+                ref={meshRef}
+                frustumCulled={false}
+                onPointerOver={(event) => setHovered(true)}
+                onPointerOut={(event) => setHovered(false)}
+            >
                 <boxGeometry args={adjustedDimensions} />
-                <meshStandardMaterial color={color} />
+                <meshStandardMaterial color={hovered ? color : 'orange'} />
             </mesh>
             <lineSegments ref={edgesRef} frustumCulled={false}>
                 <edgesGeometry attach="geometry" args={[new THREE.BoxGeometry(...adjustedDimensions)]} />

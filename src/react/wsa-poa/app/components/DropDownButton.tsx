@@ -18,9 +18,9 @@ export const DropDownButton = () => {
                 },
             });
             const data = await response.json();
-            console.log('Fetched products:', data); // Debug log
+            // console.log('Fetched products:', data); // Debug log
             setProducts(data);
-            console.log('Updated products state:', products); // Debug log
+            // console.log('Updated products state:', products); // Debug log
             setProducts(data);
         } catch (error) {
             console.error('Error fetching products:', error);

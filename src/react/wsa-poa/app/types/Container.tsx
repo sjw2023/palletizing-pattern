@@ -1,4 +1,5 @@
 export type Container ={
+    id: number;
     x: number;
     y: number;
     z: number;

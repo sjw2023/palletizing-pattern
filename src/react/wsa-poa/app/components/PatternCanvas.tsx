@@ -1,10 +1,11 @@
-import {Canvas} from "@react-three/fiber";
-import {OrbitControls} from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
 import React from "react";
 import BoxDraw from "@/app/components/BoxDraw";
-import {Box} from "@/app/types/Box";
+import { Box } from "@/app/types/Box";
 
-function PatternCanvas({ boxes }:{boxes: Box[]}) {
+function PatternCanvas({ boxes }: { boxes: Box[] }) {
+    // console.log("Drawing boxes: ", boxes);
     return (
         <Canvas orthographic camera={{ zoom: 1, position: [400, 400, 600] }} style={{ width: '100%', height: '100%' }}>
             <ambientLight />
@@ -12,9 +13,9 @@ function PatternCanvas({ boxes }:{boxes: Box[]}) {
             <axesHelper args={[100]} position={[0, 0, 0]} />
             <gridHelper args={[500, 50]} position={[0, 0, 0]} />
             <OrbitControls />
-            {boxes.map((box, index
-            ) => {
-                return (
+            {boxes && boxes.map((box, index) => {
+                // console.log(box, index);
+                    return (
                     <BoxDraw
                         key={index}
                         center={[box.x, box.y, box.z]}

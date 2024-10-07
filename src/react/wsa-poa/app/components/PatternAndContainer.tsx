@@ -13,7 +13,6 @@ export default function PatternAndContainer() {
             try {
                 const productResponse = await axios.get('http://localhost:8080/api/products/1');
                 const productDimensions = productResponse.data;
-
                 const response = await axios.post('http://localhost:8080/api/reports/createReport', {
                     productId: 1,
                     palletId: 1,
