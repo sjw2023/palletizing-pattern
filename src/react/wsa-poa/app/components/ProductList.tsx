@@ -5,7 +5,7 @@ function ProductList() {
     const [products, setProducts] = useState<Product[]>([]);
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/products', {
+        fetch('http://192.168.20.66:8080/api/products', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

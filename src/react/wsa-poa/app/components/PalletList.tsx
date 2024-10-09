@@ -7,7 +7,7 @@ function PalletList() {
     const [pallets, setPallets] = useState<Pallet[]>([]);
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/pallets', {
+        fetch('http://192.168.20.66:8080/api/pallets', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

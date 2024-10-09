@@ -184,4 +184,11 @@ public abstract class ProductList {
                 .y((int) (lastProductAreaInfo.getOrigin().getY() + yIncreasingFactor))
                 .z((int) (productInfo.getHeight() / 2)).build(), rotate));
     }
+    public void addYFromIthProductCenter(long ith, long increasingFactor, boolean rotate) {
+        var lastProductAreaInfo = getProductAreaInfo((int) (ith));
+        boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
+                .x((int) (lastProductAreaInfo.getCenter().getX()))
+                .y((int) (lastProductAreaInfo.getCenter().getY() + increasingFactor))
+                .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
+    }
 }

@@ -31,11 +31,11 @@ public class ReportResult {
     protected String patternType;
     protected long totalProductsInContainer;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(mappedBy = "reportResult", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ReportResultProduct> reportResultProducts = new ArrayList<>();
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(mappedBy = "reportResult", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ReportResultPallet> reportResultPallets = new ArrayList<>();
 

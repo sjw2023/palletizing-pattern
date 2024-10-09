@@ -11,5 +11,7 @@ export type ReportResult = {
     numberOfLayers: number;
     totalProducts:number;
     reportResultProducts: Box[];
+    usedContainer: number;
+    usedPallet: number;
     reportResultPallets: Pallet[];
 }

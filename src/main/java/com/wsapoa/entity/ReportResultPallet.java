@@ -15,6 +15,7 @@ public class ReportResultPallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reportResultPalletId;
     private int orderIndex;
+    private boolean rotate;
     //TODO : Change to Coordinate object later
     private long x;
     private long y;

@@ -6,6 +6,7 @@ import com.wsapoa.repository.*;
 import com.wsapoa.utils.container.ContainerList;
 import com.wsapoa.utils.pattern.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportService implements BaseService<ReportResult, Long, ReportRequestDTO> {
@@ -33,12 +35,12 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
 
     @Override
     public ReportResult read(Long aLong) {
-        return null;
+        return reportResultRepository.findById(aLong).orElseThrow(() -> new RuntimeException("Report not found"));
     }
 
     @Override
     public List<ReportResult> getAll() {
-        return List.of();
+        return reportResultRepository.findAll();
     }
 
     private final ReportRepository reportRepository;
@@ -57,6 +59,7 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
         Product product = getProduct(reportRequestDTO.getProductId());
         List<ReportResult> reportResults = new ArrayList<>();
         for (var patternType : patternTypes) {
+            log.debug("Pattern type : {}", patternType);
             for (var containerInfo : containerInfos) {
                 for (var pallet : pallets) {
                     AbstractPattern abstractPattern = createPattern(patternType, reportRequestDTO, product, pallet, containerInfo);
@@ -76,9 +79,13 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
                     reportResultProducts.forEach(reportResult::addReportResultProduct);
                     reportResultPallets.forEach(reportResult::addReportResultPallet);
                     reportResults.add(reportResult);
+                    log.debug("Report result creation has been done per pallet");
                 }
+                log.debug("Report result creation has been done per container");
             }
+            log.info("Report result creation has been done per pattern type");
         }
+        log.info("Report results creation has been done");
         return reportResults;
     }
 
@@ -109,23 +116,31 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
         };
     }
 
-    private boolean fillContainerWithPatterns(ContainerList containerList, AbstractPattern abstractPattern) {
-        while (containerList.isSpaceLeft(abstractPattern) && containerList.isLengthLeft(abstractPattern)) {
-            var numOfPatternsInWidth = containerList.getContainerInfo().getWidth() / abstractPattern.getActualPatternWidth();
-            if(numOfPatternsInWidth == 0){
-                numOfPatternsInWidth = containerList.getContainerInfo().getWidth() / abstractPattern.getActualPatternLength();
+    //TODO : Modify to set rotate when container's width is fit with other orientation.
+    private boolean  fillContainerWithPatterns(ContainerList containerList, AbstractPattern abstractPattern) {
+        var length = containerList.getContainerInfo().getWidth()/abstractPattern.getPatternLength();
+        var width = containerList.getContainerInfo().getWidth()/abstractPattern.getPatternWidth();
+        while (containerList.isSpaceLeft(abstractPattern) && containerList.isLengthLeft(abstractPattern, length >= width)) {
+            if( length >= width ){
+                var numOfPatternsInWidth = containerList.getContainerInfo().getWidth() / abstractPattern.getPatternLength();
                 if(numOfPatternsInWidth == 0){
                     return false;
                 }
                 for(int i =0; i< numOfPatternsInWidth; i++){
-                    containerList.addPattern(copyPattern(abstractPattern), true, i);
+                    AbstractPattern temp = copyPattern(abstractPattern);
+                    log.debug("Adding pattern {} to the container along with Length direction", temp);
+                    containerList.addPattern(temp, true, i);
                 }
             }else{
-                for (int i = 0; i < numOfPatternsInWidth; i++) {
-                    containerList.addPattern(copyPattern(abstractPattern), abstractPattern.isRotate(), i);
+                var numOfPatternsInWidth = containerList.getContainerInfo().getWidth() / abstractPattern.getPatternWidth();
+                for(int i = 0; i < numOfPatternsInWidth; i++){
+                    AbstractPattern temp = copyPattern(abstractPattern);
+                    log.debug("Adding pattern {} to the container along with Width direction", temp);
+                    containerList.addPattern(temp, false, i);
                 }
-            }
+             }
         }
+        log.debug("Filling contianer has been done {}", containerList);
         return true;
     }
 
@@ -138,6 +153,7 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
                     .y(pattern.getCenter().getY())
                     .z(pattern.getCenter().getZ())
                     .orderIndex(orderIndex.getAndIncrement())
+                    .rotate(pattern.isRotate())
                     .build();
             reportResultPallets.add(reportResultPallet);
         });

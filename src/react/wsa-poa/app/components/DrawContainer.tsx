@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import React from "react";
 
-function Container({ center, dimensions, color = "lightblue" }: { center: number[], dimensions: number[], color?: string }) {
+function DrawContainer({ center, dimensions, color = "lightblue" }: { center: number[], dimensions: number[], color?: string }) {
     const planes = [
         { position: [0, 0, -dimensions[2] / 2] as [number, number, number], rotation: [0, 0, 0] as [number, number, number] }, // Front
         { position: [0, 0, dimensions[2] / 2] as [number, number, number], rotation: [0, Math.PI, 0] as [number, number, number] }, // Back
@@ -24,4 +24,4 @@ function Container({ center, dimensions, color = "lightblue" }: { center: number
         </group>
     );
 }
-export default Container;
+export default DrawContainer;
