@@ -6,20 +6,20 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-//TODO : Have end-points to return DTO as its response
-public abstract class BaseController<T, ID, DTO> {
+//TODO : Have end-points to return ReqDTO as its response
+public abstract class BaseController<ResDTO, ID, ReqDTO> {
 
-    protected abstract BaseService<T, ID, DTO> getService();
+    protected abstract BaseService<ResDTO, ID, ReqDTO> getService();
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody DTO dto) {
-        getService().create(dto);
+    public ResponseEntity<Void> create(@Valid @RequestBody ReqDTO reqDto) {
+        getService().create(reqDto);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable ID id, @Valid @RequestBody DTO dto) {
-        getService().update(id, dto);
+    public ResponseEntity<Void> update(@PathVariable ID id, @Valid @RequestBody ReqDTO reqDto) {
+        getService().update(id, reqDto);
         return ResponseEntity.ok().build();
     }
 
@@ -30,14 +30,14 @@ public abstract class BaseController<T, ID, DTO> {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<T> read(@PathVariable ID id) {
-        T entity = getService().read(id);
+    public ResponseEntity<ResDTO> read(@PathVariable ID id) {
+        ResDTO entity = getService().read(id);
         return ResponseEntity.ok(entity);
     }
 
     @GetMapping
-    public ResponseEntity<List<T>> getAll() {
-        List<T> entities = getService().getAll();
+    public ResponseEntity<List<ResDTO>> getAll() {
+        List<ResDTO> entities = getService().getAll();
         return ResponseEntity.ok(entities);
     }
 }

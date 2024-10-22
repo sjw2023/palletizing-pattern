@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @RequiredArgsConstructor
 public class ReportService implements BaseService<ReportResult, Long, ReportRequestDTO> {
+    List<String> patternTypes = List.of("INTERLOCK", "BLOCK", "SPIRAL", "DIAGONAL");
+
     @Override
     public void create(ReportRequestDTO reportRequestDTO) {
 
@@ -30,7 +33,6 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
 
     @Override
     public void delete(Long aLong) {
-
     }
 
     @Override
@@ -53,7 +55,6 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
     public List<ReportResult> createReport(ReportRequestDTO reportRequestDTO) {
         Report report = new Report(reportRequestDTO);
         reportRepository.save(report);
-        List<String> patternTypes = List.of("INTERLOCK", "BLOCK", "SPIRAL", "DIAGONAL");
         List<Pallet> pallets = getPallets();
         List<Container> containerInfos = getContainers();
         Product product = getProduct(reportRequestDTO.getProductId());
@@ -122,26 +123,26 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
         var width = containerList.getContainerInfo().getWidth()/abstractPattern.getPatternWidth();
         while (containerList.isSpaceLeft(abstractPattern) && containerList.isLengthLeft(abstractPattern, length >= width)) {
             if( length >= width ){
-                var numOfPatternsInWidth = containerList.getContainerInfo().getWidth() / abstractPattern.getPatternLength();
-                if(numOfPatternsInWidth == 0){
+                if(length == 0){
                     return false;
                 }
-                for(int i =0; i< numOfPatternsInWidth; i++){
-                    AbstractPattern temp = copyPattern(abstractPattern);
-                    log.debug("Adding pattern {} to the container along with Length direction", temp);
-                    containerList.addPattern(temp, true, i);
-                }
+                addPatterns(length, abstractPattern, "Adding pattern {} to the container along with Length direction", containerList, false);
             }else{
-                var numOfPatternsInWidth = containerList.getContainerInfo().getWidth() / abstractPattern.getPatternWidth();
-                for(int i = 0; i < numOfPatternsInWidth; i++){
-                    AbstractPattern temp = copyPattern(abstractPattern);
-                    log.debug("Adding pattern {} to the container along with Width direction", temp);
-                    containerList.addPattern(temp, false, i);
-                }
-             }
+                addPatterns(width, abstractPattern, "Adding pattern {} to the container along with Width direction", containerList, true);
+            }
         }
-        log.debug("Filling contianer has been done {}", containerList);
+        log.debug("Filling  has been done {}", containerList);
         return true;
+    }
+
+    private void addPatterns(long length, AbstractPattern abstractPattern, String s, ContainerList containerList, boolean rotate) {
+        for (int i = 0; i < length; i++) {
+            AbstractPattern temp = copyPattern(abstractPattern);
+            log.debug(s, temp);
+            if( !containerList.addPattern(temp, rotate, i) ){
+                log.debug("Pattern {} could not be added to the container", temp);
+            }
+        }
     }
 
     private List<ReportResultPallet> createReportResultPallets(ContainerList containerList) {

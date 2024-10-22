@@ -13,5 +13,4 @@ public class ReportRequestDTO{
     private long productId;
     private long marginSetting;
     private long exceedLengthSetting;
-    private String ContainerType;
 }

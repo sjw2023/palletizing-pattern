@@ -103,7 +103,7 @@ public class Interlock extends AbstractPattern {
     public List<ReportResultProduct> calculatePatterns() {
         InterlockProductList interlockProductList = new InterlockProductList(productInfo, palletInfo);
         //TODO : Calculate the marginal factor of the first row and add
-        //TODO : This method must be called after set the width length values.
+        //TODO : Didn't handle the case which top row is shorter than the body
         if (!isRotatedBetter()) {
             for (int j = 0; j < this.productsInRestOfTheRowsInWidth; j++) {
                 for (int i = 0; i < this.productsInRestOfTheRowsInLength; i++) {
@@ -113,17 +113,15 @@ public class Interlock extends AbstractPattern {
                         //TODO : Change to use find last ith product version
                         interlockProductList.addYFromIthProductCenter(interlockProductList.getMap().size()-this.productsInRestOfTheRowsInLength, productInfo.getLength(), true);
                     } else {
-                        interlockProductList.addIncreasedXFromEnd(productInfo.getWidth() / 2, true);
+                        interlockProductList.addProductEndEnd(productInfo.getWidth()/2,-productInfo.getLength()/2,true);
                     }
                 }
             }
-            //TODO : Didn't handle the case which top row is shorter than the body
             for (int i = 0; i < this.theNumOfProductsInFirstRow; i++) {
                 if (i == 0) {
-                    //TODO : Change addIncreasedXYFROMOriginEndFromIthProduct to use ith correctly, now it is uising it as ith product from last. It is not consistence with method name.
-                    interlockProductList.addIncreasedXYFromOriginEndFromIthProduct(this.productsInRestOfTheRowsInLength, productInfo.getLength() / 2, (productInfo.getWidth() / 2), false);
+                    interlockProductList.addProductEndEnd(-productInfo.getLength()/2, productInfo.getWidth()/2, false);
                 } else {
-                    interlockProductList.addIncreasedXFromEnd(productInfo.getLength() / 2, false);
+                    interlockProductList.addProductCenterCenter(-productInfo.getLength(), 0, false);
                 }
             }
         } else {
@@ -141,10 +139,9 @@ public class Interlock extends AbstractPattern {
             //TODO : Didn't handle the case which top row is shorter than the body
             for (int i = 0; i < this.theNumOfProductsInFirstRow; i++) {
                 if (i == 0) {
-                    //TODO : Change addIncreasedXYFROMOriginEndFromIthProduct to use ith correctly, now it is uising it as ith product from last. It is not consistence with method name.
-                    interlockProductList.addIncreasedXYFromOriginFromIthProduct(this.productsInRestOfTheRowsInLength, productInfo.getLength() + productInfo.getWidth()/2, (productInfo.getLength() / 2), true);
+                    interlockProductList.addProductEndEnd(productInfo.getWidth()/2, -productInfo.getLength()/2, true);
                 } else {
-                    interlockProductList.addIncreasedYFromCenter(productInfo.getLength(), true);
+                    interlockProductList.addProductCenterCenter(0, -productInfo.getLength(), true);
                 }
             }
         }

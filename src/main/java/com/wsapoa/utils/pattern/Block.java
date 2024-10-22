@@ -20,7 +20,7 @@ import java.util.List;
  * \ \ \ \
  */
 public class Block extends AbstractPattern {
-    boolean boxRotated;
+    private boolean boxRotated;
 
     public Block(AbstractPattern abstractPattern) {
         super(abstractPattern);
@@ -86,20 +86,10 @@ public class Block extends AbstractPattern {
     @Override
     public List<ReportResultProduct> calculatePatterns() {
         BlockProductList blockProductList = new BlockProductList(productInfo, palletInfo);
-        long totalProductInLength = this.calcProductInLength();
-        long totalProductInWidth = this.calcProductInWidth();
-        long width = this.productInfo.getLength();
-        long length = this.productInfo.getWidth();
-        long height = this.productInfo.getHeight();
-
-        if (boxRotated) {
-            totalProductInLength = this.calcRotatedProductInLength();
-            totalProductInWidth = this.calcRotatedProductInWidth();
-            width = this.productInfo.getWidth();
-            length = this.productInfo.getLength();
-        }
-        this.actualPatternLength = totalProductInLength * (boxRotated ? width : length);
-        this.actualPatternWidth = totalProductInWidth * (boxRotated ? length : width);
+        long totalProductInLength = boxRotated? this.calcRotatedProductInLength() : this.calcProductInLength();
+        long totalProductInWidth = boxRotated? this.calcRotatedProductInWidth() : this.calcProductInWidth();
+        long width = boxRotated ? productInfo.getWidth() : this.productInfo.getLength();
+        long length = boxRotated ? productInfo.getLength() : this.productInfo.getWidth();
         for (int i = 0; i < totalProductInWidth; i++) {
             for (int j = 0; j < totalProductInLength; j++) {
                 blockProductList.addProductAreaInfo(new ObjectAreaInfo(
@@ -107,7 +97,7 @@ public class Block extends AbstractPattern {
                         new Coordinate(
                                 (j) * (width) + width / 2,
                                 (i) * (length) + length / 2,
-                                height / 2
+                                productInfo.getHeight() / 2
                         ),
                         boxRotated
                 ));

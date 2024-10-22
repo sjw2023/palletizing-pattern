@@ -16,7 +16,7 @@ public abstract class AbstractPattern extends ReportResult {
     protected Container containerInfo;
     protected Coordinate center;
     //    protected Coordinate origin;
-//    protected Coordinate end;
+    //    protected Coordinate end;
     protected boolean rotate;
     protected long margin;
     protected long exceedLimit;
@@ -47,7 +47,9 @@ public abstract class AbstractPattern extends ReportResult {
         this.center = abstractPattern.center;
     }
 
-    //TODO : Update Super in each pattern ctor
+    //TODO : Update Super in each pattern cto
+    //TODO : update ctor to initialize actualPatternLength and width
+
     public AbstractPattern(
             Product product,
             Pallet pallet,
@@ -55,6 +57,28 @@ public abstract class AbstractPattern extends ReportResult {
             boolean rotate,
             long margin,
             long exceedLimit
+    ) {
+        this.productInfo = product;
+        this.palletInfo = pallet;
+        this.containerInfo = container;
+        this.rotate = rotate;
+        this.margin = margin;
+        this.exceedLimit = exceedLimit;
+        this.totalPatternHeight = containerInfo.getHeight();
+        this.totalPatternLength = calcTotalPatternLength();
+        this.totalPatternWidth = calcTotalPatternWidth();
+        this.actualPatternVolume = calcActualPatternVolume();
+        this.actualPatternHeight = calcNumberOfLayers() * productInfo.getHeight() + palletInfo.getHeight();
+    }
+    //TODO no need
+    public AbstractPattern(
+            Product product,
+            Pallet pallet,
+            Container container,
+            boolean rotate,
+            long margin,
+            long exceedLimit,
+            String patternType
     ) {
         this.productInfo = product;
         this.palletInfo = pallet;

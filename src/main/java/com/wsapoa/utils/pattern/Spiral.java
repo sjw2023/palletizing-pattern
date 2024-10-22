@@ -20,7 +20,6 @@ public class Spiral extends AbstractPattern{
         this.patternType = abstractPattern.getPatternType();
         this.actualPatternLength = calcActualPatternLength();
         this.actualPatternWidth = calcActualPatternWidth();
-
     }
 
     public Spiral(Product product, Pallet pallet, Container container, String patternType, boolean rotate, long margin, long exceedLimit) {
@@ -50,7 +49,6 @@ public class Spiral extends AbstractPattern{
         SpiralProductList spiralProductList = new SpiralProductList(productInfo, palletInfo);
         var productInWidth = calcProductInWidth();
         var productInLength = calcProductInLength();
-
         for (int i = 0; i < productInWidth; i++) {
             spiralProductList.addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
                     .x((int) (productInfo.getWidth() / 2 + i * productInfo.getWidth()))
@@ -58,7 +56,6 @@ public class Spiral extends AbstractPattern{
                     .z((int) (productInfo.getHeight() / 2))
                     .build(), true));
         }
-
         var lastProductAreaInfo = spiralProductList.getLastProductAreaInfo();
         for (int i = 0; i < productInLength; i++) {
             spiralProductList.addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
@@ -67,7 +64,6 @@ public class Spiral extends AbstractPattern{
                     .z((int) (productInfo.getHeight() / 2))
                     .build(), false));
         }
-
         lastProductAreaInfo = spiralProductList.getLastProductAreaInfo();
         for (int i = 0; i < productInWidth; i++) {
             spiralProductList.addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
@@ -76,7 +72,6 @@ public class Spiral extends AbstractPattern{
                     .z((int) (productInfo.getHeight() / 2))
                     .build(), true));
         }
-
         lastProductAreaInfo = spiralProductList.getLastProductAreaInfo();
         for (int i = 0; i < productInWidth; i++) {
             spiralProductList.addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
@@ -85,7 +80,6 @@ public class Spiral extends AbstractPattern{
                     .z(productInfo.getHeight() / 2)
                     .build(), false));
         }
-
         spiralProductList.addLayers( calcNumberOfLayers() );
         spiralProductList.getMap().forEach(
                 productAreaInfo -> products.add(new ReportResultProduct(productAreaInfo, orderIndex.getAndIncrement()))
@@ -102,6 +96,6 @@ public class Spiral extends AbstractPattern{
     @Override
     public long calcActualPatternWidth() {
         this.actualPatternWidth = calcProductInWidth() * productInfo.getWidth() + palletInfo.getLength();
-        return this.totalPatternWidth;
+        return this.actualPatternLength;
     }
 }

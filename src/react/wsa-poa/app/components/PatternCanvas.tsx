@@ -3,8 +3,12 @@ import { OrbitControls } from "@react-three/drei";
 import React from "react";
 import BoxDraw from "@/app/components/BoxDraw";
 import { Box } from "@/app/types/Box";
+import {Pallet} from "@/app/types/Pallet";
+import DrawPallet from "@/app/components/DrawPallet";
+import {palletState} from "@/app/atom/atom";
+import {useRecoilState} from "recoil";
 
-function PatternCanvas({ boxes }: { boxes: Box[] }) {
+function PatternCanvas({ boxes, palletInfo }: { boxes: Box[], palletInfo: any }) {
     // console.log("Drawing boxes: ", boxes);
     return (
         <Canvas orthographic camera={{ zoom: 1, position: [400, 400, 600] }} style={{ width: '100%', height: '100%' }}>
@@ -26,6 +30,7 @@ function PatternCanvas({ boxes }: { boxes: Box[] }) {
                     />
                 );
             })}
+
         </Canvas>
     );
 }

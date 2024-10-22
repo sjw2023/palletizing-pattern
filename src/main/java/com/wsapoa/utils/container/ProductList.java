@@ -17,8 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class ProductList {
-    //TODO : Remove possibleCoordinates
+public abstract class ProductList{
     protected List<ObjectAreaInfo> map;
     protected Product productInfo;
     protected Pallet palletInfo;
@@ -38,12 +37,8 @@ public abstract class ProductList {
     }
 
     public boolean addFirstProductAreaInfo(boolean rotate){
-        var width = productInfo.getWidth()/2;
-        var length = productInfo.getLength()/2;
-        if(rotate){
-            width = productInfo.getLength()/2;
-            length = productInfo.getWidth()/2;
-        }
+        var width = rotate ? productInfo.getLength()/2 : productInfo.getWidth()/2;
+        var length = rotate ? productInfo.getWidth()/2 : productInfo.getLength()/2;
         assert map.isEmpty();
         var productAreaInfo = new ObjectAreaInfo(
                 productInfo,
@@ -140,13 +135,14 @@ public abstract class ProductList {
         return reportResultProducts;
     }
 
-    public void addIncreasedXFromEnd(long increasingFactor, boolean rotate) {
+    public void addIncreasedXFromOrigin(long increasingFactor, boolean rotate) {
         var lastProductAreaInfo = getLastProductAreaInfo();
         boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
-                .x((int) (lastProductAreaInfo.getEnd().getX() + increasingFactor))
+                .x((int) (lastProductAreaInfo.getOrigin().getX() + increasingFactor))
                 .y((int) (lastProductAreaInfo.getCenter().getY()))
                 .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
     }
+
     public void addIncreasedXFromCenterFromIthProduct(long ith, long increasingFactor, boolean rotate) {
         var lastProductAreaInfo = getProductAreaInfo((int) (getMap().size() - ith));
         boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
@@ -167,16 +163,18 @@ public abstract class ProductList {
         boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
                 .x((int) (lastProductAreaInfo.getCenter().getX()))
                 .y((int) (lastProductAreaInfo.getCenter().getY() + increasingFactor))
-                .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
+                .z((int) (lastProductAreaInfo.getCenter().getZ()))
+                .build(), rotate));
     }
 
     public void addIncreasedXYFromOriginEndFromIthProduct(long ith, long xIncreasingFactor, long yIncreasingFactor, boolean rotate) {
-        var lastProductAreaInfo = getProductAreaInfo((int) (getMap().size() - ith));
+        var lastProductAreaInfo = getProductAreaInfo((int) ( (getMap().size()-1) - ith ));
         boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
                 .x((int) (lastProductAreaInfo.getOrigin().getX() + xIncreasingFactor))
                 .y((int) (lastProductAreaInfo.getEnd().getY() + yIncreasingFactor))
                 .z((int) (productInfo.getHeight() / 2)).build(), rotate));
     }
+
     public void addIncreasedXYFromOriginFromIthProduct(long ith, long xIncreasingFactor, long yIncreasingFactor, boolean rotate) {
         var lastProductAreaInfo = getProductAreaInfo((int) (getMap().size() - ith));
         boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
@@ -184,11 +182,35 @@ public abstract class ProductList {
                 .y((int) (lastProductAreaInfo.getOrigin().getY() + yIncreasingFactor))
                 .z((int) (productInfo.getHeight() / 2)).build(), rotate));
     }
+
     public void addYFromIthProductCenter(long ith, long increasingFactor, boolean rotate) {
         var lastProductAreaInfo = getProductAreaInfo((int) (ith));
         boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
                 .x((int) (lastProductAreaInfo.getCenter().getX()))
                 .y((int) (lastProductAreaInfo.getCenter().getY() + increasingFactor))
+                .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
+    }
+
+    public void addProductCenterEnd(long x, long y, boolean rotate) {
+        var lastProductAreaInfo = getLastProductAreaInfo();
+        boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
+                .x((int) (lastProductAreaInfo.getCenter().getX() + x))
+                .y((int) (lastProductAreaInfo.getEnd().getY() + y))
+                .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
+    }
+
+    public void addProductCenterCenter(long x, long y, boolean rotate) {
+        var lastProductAreaInfo = getLastProductAreaInfo();
+        boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
+                .x((int) (lastProductAreaInfo.getCenter().getX() + x))
+                .y((int) (lastProductAreaInfo.getCenter().getY() + y))
+                .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
+    }
+    public void addProductEndEnd(long x, long y, boolean rotate){
+        var lastProductAreaInfo = getLastProductAreaInfo();
+        boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
+                .x((int) (lastProductAreaInfo.getEnd().getX() + x))
+                .y((int) (lastProductAreaInfo.getEnd().getY() + y))
                 .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
     }
 }

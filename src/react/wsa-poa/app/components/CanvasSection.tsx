@@ -7,6 +7,7 @@ import BoxDraw from "@/app/components/BoxDraw";
 import {Box} from "@/app/types/Box";
 import {useRecoilState} from "recoil";
 import {palletState} from "../atom/atom";
+import DrawPallet from "@/app/components/DrawPallet";
 
 interface CanvasSectionProps {
     boxes: Box[];
@@ -15,17 +16,21 @@ interface CanvasSectionProps {
     cameraPosition: THREE.Vector3;
     zoom: number;
     farFactor: number;
+    palletInfo: any;
 }
 
-function CanvasSection({
-                           boxes,
-                           reducedDimensions,
-                           cameraPosition,
-                           zoom,
-                           farFactor,
-                       }: CanvasSectionProps) {
+function CanvasSection(
+    {
+        boxes,
+        reducedDimensions,
+        cameraPosition,
+        zoom,
+        farFactor,
+        palletInfo,
+    }: CanvasSectionProps
+) {
     const [pallets, setPallets] = useRecoilState(palletState);
-    console.log(pallets);
+     console.log(pallets);
 
     return (
         <div style={{flexDirection: "row", width: "100%", height: "100%"}}>
@@ -42,7 +47,10 @@ function CanvasSection({
                     near: 0.1,
                     far: farFactor,
                 }}
-                style={{width: "100%", height: "100%"}}
+                style={{
+                    width: "100%",
+                    height: "100%",
+                }}
             >
                 <ambientLight/>
                 <pointLight position={[10, 10, 10]}/>
@@ -51,7 +59,7 @@ function CanvasSection({
                 <OrbitControls/>
                 <DrawContainer
                     center={
-                    [reducedDimensions.length / 2 + pallets[0].x/2, reducedDimensions.height, reducedDimensions.width / 2 + pallets[0].y/2]}
+                        [reducedDimensions.length / 2 + (pallets === null ? 0 : pallets[0].x), reducedDimensions.height, reducedDimensions.width / 2 + (pallets === null ? 0 : pallets[0].z)]}
                     dimensions={[
                         reducedDimensions.length,
                         reducedDimensions.height,
@@ -60,21 +68,39 @@ function CanvasSection({
                 />
                 {pallets?.length > 0 &&
                     pallets?.map((pallet: any, index: number) => (
+                        <group>
+                            <DrawPallet
+                            center=
+                                {
+                                    new THREE.Vector3(
+                                        pallet.x + palletInfo?.width / 20,
+                                        pallet.y,
+                                        pallet.z + palletInfo?.length / 20
+                                    )
+
+                                }
+                            dimensions={[
+                                palletInfo === null ? 100 : palletInfo.width / 10,
+                                palletInfo === null ? 100 : palletInfo.height / 10,
+                                palletInfo === null ? 100 : palletInfo.length / 10
+                            ]}
+                        />
                         <group
                             key={index}
                             position={
                                 new THREE.Vector3(
-                                    pallet.x ,
-                                    pallet.y ,
-                                    pallet.z ,
+                                    pallet.x,
+                                    pallet.y,
+                                    pallet.z,
                                 )
                             }
-                            rotation={
-                                // pallet.rotate
-                                //     ? new THREE.Euler( 0, Math.PI /2, 0)
-                                     new THREE.Euler( 0, 0, 0)
-                            }
+                            // rotation={
+                            //     !pallet.rotate
+                            //         ? new THREE.Euler(0, Math.PI / 2, 0)
+                            //         : new THREE.Euler(0, 0, 0)
+                            // }
                         >
+
                             {boxes?.length > 0 &&
                                 boxes.map((box, boxIndex) => (
                                     <BoxDraw
@@ -90,7 +116,9 @@ function CanvasSection({
                                         color={box.color}
                                     />
                                 ))}
+
                         </group>
+                            </group>
                     ))}
             </Canvas>
         </div>

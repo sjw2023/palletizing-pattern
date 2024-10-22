@@ -13,5 +13,7 @@ export type ReportResult = {
     reportResultProducts: Box[];
     usedContainer: number;
     usedPallet: number;
+    usedProduct: number;
+    patternType: string;
     reportResultPallets: Pallet[];
 }
