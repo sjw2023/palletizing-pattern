@@ -30,7 +30,7 @@ function CanvasSection(
     }: CanvasSectionProps
 ) {
     const [pallets, setPallets] = useRecoilState(palletState);
-     console.log(pallets);
+    console.log(pallets);
 
     return (
         <div style={{flexDirection: "row", width: "100%", height: "100%"}}>
@@ -59,66 +59,72 @@ function CanvasSection(
                 <OrbitControls/>
                 <DrawContainer
                     center={
-                        [reducedDimensions.length / 2 + (pallets === null ? 0 : pallets[0].x), reducedDimensions.height, reducedDimensions.width / 2 + (pallets === null ? 0 : pallets[0].z)]}
+                        [reducedDimensions.width / 2 + (pallets === null ? 0 : pallets[0].x), reducedDimensions.height, reducedDimensions.length / 2 + (pallets === null ? 0 : pallets[0].z)]}
                     dimensions={[
-                        reducedDimensions.length,
-                        reducedDimensions.height,
                         reducedDimensions.width,
+                        reducedDimensions.height,
+                        reducedDimensions.length,
                     ]}
                 />
                 {pallets?.length > 0 &&
                     pallets?.map((pallet: any, index: number) => (
                         <group>
                             <DrawPallet
-                            center=
-                                {
+                                center=
+                                    {
+                                        new THREE.Vector3(
+                                            pallet.x + palletInfo?.width / 20,
+                                            pallet.y,
+                                            pallet.z + palletInfo?.length / 20
+                                        )
+                                    }
+                                dimensions={[
+                                    palletInfo === null ? 100 : palletInfo.width / 10,
+                                    palletInfo === null ? 100 : palletInfo.height / 10,
+                                    palletInfo === null ? 100 : palletInfo.length / 10
+                                ]}
+                                color="yellow"
+                                rotate={pallet.rotate}
+                            />
+                            <group
+                                key={index}
+                                position={
+                                pallet.rotate ?
                                     new THREE.Vector3(
-                                        pallet.x + palletInfo?.width / 20,
+                                        pallet.x + 120,
                                         pallet.y,
-                                        pallet.z + palletInfo?.length / 20
+                                        pallet.z,
+                                    ) :
+                                    new THREE.Vector3(
+                                        pallet.x,
+                                        pallet.y,
+                                        pallet.z,
                                     )
-
                                 }
-                            dimensions={[
-                                palletInfo === null ? 100 : palletInfo.width / 10,
-                                palletInfo === null ? 100 : palletInfo.height / 10,
-                                palletInfo === null ? 100 : palletInfo.length / 10
-                            ]}
-                        />
-                        <group
-                            key={index}
-                            position={
-                                new THREE.Vector3(
-                                    pallet.x,
-                                    pallet.y,
-                                    pallet.z,
-                                )
-                            }
-                            // rotation={
-                            //     !pallet.rotate
-                            //         ? new THREE.Euler(0, Math.PI / 2, 0)
-                            //         : new THREE.Euler(0, 0, 0)
-                            // }
-                        >
+                                rotation={
+                                    pallet.rotate
+                                        ? new THREE.Euler(0, -Math.PI / 2, 0)
+                                        : new THREE.Euler(0, 0, 0)
+                                }
+                            >
 
-                            {boxes?.length > 0 &&
-                                boxes.map((box, boxIndex) => (
-                                    <BoxDraw
-                                        key={boxIndex}
-                                        center={[box.x, box.y, box.z]}
-                                        dimensions={[
-                                            box.width,
-                                            box.height,
-                                            box.length,
-                                        ]}
-                                        rotate={box.rotate}
-                                        orderIndex={box.orderIndex}
-                                        color={box.color}
-                                    />
-                                ))}
-
-                        </group>
+                                {boxes?.length > 0 &&
+                                    boxes.map((box, boxIndex) => (
+                                        <BoxDraw
+                                            key={boxIndex}
+                                            center={[box.x, box.y, box.z]}
+                                            dimensions={[
+                                                box.width,
+                                                box.height,
+                                                box.length,
+                                            ]}
+                                            rotate={box.rotate}
+                                            orderIndex={box.orderIndex}
+                                            color={box.color}
+                                        />
+                                    ))}
                             </group>
+                        </group>
                     ))}
             </Canvas>
         </div>

@@ -21,6 +21,10 @@ import java.util.List;
  */
 public class Block extends AbstractPattern {
     private boolean boxRotated;
+    private long totalProductInLength;
+    private long totalProductInWidth;
+    private long length;
+    private long width;
 
     public Block(AbstractPattern abstractPattern) {
         super(abstractPattern);
@@ -28,6 +32,10 @@ public class Block extends AbstractPattern {
         this.actualPatternVolume = abstractPattern.getActualPatternVolume();
         this.actualPatternLength = abstractPattern.getActualPatternLength();
         this.actualPatternWidth = abstractPattern.getActualPatternWidth();
+        this.totalProductInLength = boxRotated ? this.calcRotatedProductInLength() : this.calcProductInLength();
+        this.totalProductInWidth = boxRotated ? this.calcRotatedProductInWidth() : this.calcProductInWidth();
+        this.width = boxRotated ? productInfo.getWidth() : this.productInfo.getLength();
+        this.length = boxRotated ? productInfo.getLength() : this.productInfo.getWidth();
     }
 
     public Block(
@@ -44,6 +52,10 @@ public class Block extends AbstractPattern {
         this.actualPatternLength = calcActualPatternLength();
         this.actualPatternWidth = calcActualPatternWidth();
         this.actualPatternVolume = calcActualPatternVolume();
+        this.totalProductInLength = boxRotated ? this.calcRotatedProductInLength() : this.calcProductInLength();
+        this.totalProductInWidth = boxRotated ? this.calcRotatedProductInWidth() : this.calcProductInWidth();
+        this.width = boxRotated ? productInfo.getWidth() : this.productInfo.getLength();
+        this.length = boxRotated ? productInfo.getLength() : this.productInfo.getWidth();
     }
 
     @Override
@@ -86,10 +98,6 @@ public class Block extends AbstractPattern {
     @Override
     public List<ReportResultProduct> calculatePatterns() {
         BlockProductList blockProductList = new BlockProductList(productInfo, palletInfo);
-        long totalProductInLength = boxRotated? this.calcRotatedProductInLength() : this.calcProductInLength();
-        long totalProductInWidth = boxRotated? this.calcRotatedProductInWidth() : this.calcProductInWidth();
-        long width = boxRotated ? productInfo.getWidth() : this.productInfo.getLength();
-        long length = boxRotated ? productInfo.getLength() : this.productInfo.getWidth();
         for (int i = 0; i < totalProductInWidth; i++) {
             for (int j = 0; j < totalProductInLength; j++) {
                 blockProductList.addProductAreaInfo(new ObjectAreaInfo(
@@ -110,7 +118,7 @@ public class Block extends AbstractPattern {
     @Override
     public long calcActualPatternLength() {
         this.actualPatternLength = boxRotated ? calcRotatedProductInLength() * productInfo.getWidth() : calcProductInLength() * productInfo.getLength();
-        return this.actualPatternLength ;
+        return this.actualPatternLength;
     }
 
     @Override

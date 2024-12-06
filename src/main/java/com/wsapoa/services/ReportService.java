@@ -64,11 +64,13 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
             for (var containerInfo : containerInfos) {
                 for (var pallet : pallets) {
                     AbstractPattern abstractPattern = createPattern(patternType, reportRequestDTO, product, pallet, containerInfo);
-                    //TODO : Create Pattern needs containerInfo ????
+                    //TODO : Create pattern usese the container information to calculate the pattern's height,
+                    // consider to use another parameter to seperate the container information from the pattern
                     List<ReportResultProduct> reportResultProducts = abstractPattern.calculatePatterns();
 //                ReportResult reportResult = createReportResult(reportRequestDTO, product, pallet, pattern, containerInfo);
 //                report.addReportResult(reportResult);
-                    ContainerList container = new ContainerList(containerInfo);
+//                    ContainerList container = new ContainerList(containerInfo);
+                    ContainerList container = new ContainerList(abstractPattern);
                     if( !fillContainerWithPatterns(container, abstractPattern) ){
                         continue;
                     }
@@ -84,9 +86,9 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
                 }
                 log.debug("Report result creation has been done per container");
             }
-            log.info("Report result creation has been done per pattern type");
+            log.debug("Report result creation has been done per pattern type");
         }
-        log.info("Report results creation has been done");
+        log.debug("Report results creation has been done");
         return reportResults;
     }
 
@@ -121,14 +123,17 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
     private boolean  fillContainerWithPatterns(ContainerList containerList, AbstractPattern abstractPattern) {
         var length = containerList.getContainerInfo().getWidth()/abstractPattern.getPatternLength();
         var width = containerList.getContainerInfo().getWidth()/abstractPattern.getPatternWidth();
-        while (containerList.isSpaceLeft(abstractPattern) && containerList.isLengthLeft(abstractPattern, length >= width)) {
-            if( length >= width ){
+        while (containerList.isSpaceLeft(abstractPattern) && containerList.isLengthLeft(abstractPattern, length > width)) {
+            if( length > width ){
                 if(length == 0){
                     return false;
                 }
-                addPatterns(length, abstractPattern, "Adding pattern {} to the container along with Length direction", containerList, false);
-            }else{
-                addPatterns(width, abstractPattern, "Adding pattern {} to the container along with Width direction", containerList, true);
+                addPatterns(length, abstractPattern, "Adding pattern {} to the container along with Length direction", containerList, true);
+            }else if(width >= length){
+                if(width == 0){
+                    return false;
+                }
+                addPatterns(width, abstractPattern, "Adding pattern {} to the container along with Width direction", containerList, false);
             }
         }
         log.debug("Filling  has been done {}", containerList);
@@ -139,7 +144,7 @@ public class ReportService implements BaseService<ReportResult, Long, ReportRequ
         for (int i = 0; i < length; i++) {
             AbstractPattern temp = copyPattern(abstractPattern);
             log.debug(s, temp);
-            if( !containerList.addPattern(temp, rotate, i) ){
+            if( !containerList.addPattern( temp, rotate, i ) ){
                 log.debug("Pattern {} could not be added to the container", temp);
             }
         }

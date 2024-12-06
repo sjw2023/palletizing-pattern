@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO : Consider use of width and length value to make consistency through the whole class.
+
 @Getter
 @Setter
 public class ContainerList {
@@ -28,29 +30,17 @@ public class ContainerList {
         this.containerLengthLeft = containerInfo.getLength();
         this.containerAreaInfo = new ObjectAreaInfo(containerInfo, new Coordinate(containerInfo.getLength() / 2, containerInfo.getWidth() / 2, containerInfo.getHeight() / 2), false);
     }
+    public ContainerList( @NotNull AbstractPattern abstractPattern){
 
-//    public ContainerList(@NotNull AbstractPattern pattern, Container containerInfo) {
-//        this(containerInfo);
-//        if (pattern != null) {
-//            initializePattern(pattern);
-//        }
-//    }
-
-//    private void initializePattern(@NotNull AbstractPattern pattern) {
-//        var x = pattern.isRotate()? pattern.getActualPatternWidth() : pattern.getActualPatternLength();
-//        var y = pattern.isRotate()? pattern.getActualPatternLength() : pattern.getActualPatternWidth();
-//        pattern.setCenter(new Coordinate(x / 2, y / 2, pattern.getTotalPatternHeight() / 2));
-//        this.patterns.add(pattern);
-//        this.containerVolumeLeft -= pattern.getPatternVolume();
-//        this.containerLengthLeft -= x;
-//    }
+        this.containerInfo = abstractPattern.getContainerInfo();
+        this.patterns = new ArrayList<>();
+        this.containerVolumeLeft = containerInfo.getContainerVolume();
+        this.containerLengthLeft = containerInfo.getLength();
+        this.containerAreaInfo = new ObjectAreaInfo(containerInfo, new Coordinate(containerInfo.getLength() / 2, containerInfo.getWidth() / 2, containerInfo.getHeight() / 2), false);
+    }
 
     public boolean isSpaceLeft(@NotNull AbstractPattern pattern) {
         return containerVolumeLeft > pattern.calcActualPatternVolume();
-    }
-
-    public boolean isPatternFitInContainer(@NotNull AbstractPattern pattern) {
-        return containerInfo.getWidth() > pattern.getActualPatternWidth();
     }
 
     public boolean addPattern(@NotNull AbstractPattern pattern, boolean rotate, int index) {
@@ -63,26 +53,34 @@ public class ContainerList {
         return true;
     }
 
+
     private void adjustContainerLengthLeft(AbstractPattern pattern, boolean rotate, int index) {
-        if (patterns.isEmpty() || patterns.size() == 1) {
-            containerLengthLeft -= rotate ? pattern.getPatternWidth() : pattern.getPatternLength();
-        } else {
+//        if (patterns.isEmpty() || patterns.size() == 1) {
+//            containerLengthLeft -= rotate ? pattern.getPatternWidth() : pattern.getPatternLength();
+//        } else {
             if (index == 0) {
                 containerLengthLeft -= rotate ? pattern.getPatternWidth() : pattern.getPatternLength();
             }
-        }
+//        }
     }
 
-    private AbstractPattern setPatternPosition(AbstractPattern pattern, boolean rotate, int index) {
+    private AbstractPattern setPatternPosition( AbstractPattern pattern, boolean rotate, int index ) {
         if (patterns.isEmpty() ) {
-            setFirstPatternPosition(pattern, rotate, index);
+            setFirstPatternPosition( pattern, rotate );
         } else {
-            setSubsequentPatternPosition(pattern, rotate, index);
+            setSubsequentPatternPosition( pattern, rotate, index );
         }
         return pattern;
     }
 
-    private void setFirstPatternPosition(@NotNull AbstractPattern pattern, boolean rotate, int index) {
+    /**
+     * Set the first pattern position in the container
+     * X means container's width direction
+     * Y means container's length direction
+     * @param pattern
+     * @param rotate
+     */
+    private void setFirstPatternPosition( @NotNull AbstractPattern pattern, boolean rotate ) {
         float xStart =
                 rotate ?
                         (float) pattern.getPatternLength() / 2 :
@@ -96,24 +94,26 @@ public class ContainerList {
     }
 
     private void setSubsequentPatternPosition(@NotNull AbstractPattern pattern, boolean rotate, int index) {
+        //TODO : This part is kinda buggy, find better way to keep consistency on the pattern's width and length
         int numOfPatternsInWidth =
                 rotate ?
                         (int) (containerInfo.getWidth() / pattern.getPatternLength()) :
-                        (int) (containerInfo.getWidth() / pattern.getPatternWidth());
-        long increaseY = rotate ? pattern.getPatternLength() : pattern.getPatternWidth();
-        long increaseX = rotate ? pattern.getPatternWidth() : pattern.getPatternLength();
+                        (int) (containerInfo.getWidth() / pattern.getPatternWidth()) ;
+        long increaseY = rotate ?  pattern.getPatternWidth() : pattern.getPatternLength() ;
+        long increaseX = rotate ?  pattern.getPatternLength() : pattern.getPatternWidth();
+
         if (index == 0) {
             AbstractPattern lastPattern = patterns.get(patterns.size() - numOfPatternsInWidth);
-            pattern.setCenter(new Coordinate(lastPattern.getCenter().getX() + increaseX, lastPattern.getCenter().getY() , lastPattern.getCenter().getZ()));
+            pattern.setCenter(new Coordinate( lastPattern.getCenter().getX() , lastPattern.getCenter().getY() + increaseY, lastPattern.getCenter().getZ()));
         } else {
             AbstractPattern lastPattern = patterns.get(patterns.size() - 1);
-            pattern.setCenter(new Coordinate( lastPattern.getCenter().getX() ,lastPattern.getCenter().getY()+ increaseY, lastPattern.getCenter().getZ()));
+            pattern.setCenter(new Coordinate( lastPattern.getCenter().getX() + increaseX, lastPattern.getCenter().getY() , lastPattern.getCenter().getZ()));
         }
         pattern.setRotate(rotate);
     }
 
     public boolean isLengthLeft(@NotNull AbstractPattern pattern, boolean rotate) {
-        return rotate ? containerLengthLeft >= pattern.getPatternLength() : containerLengthLeft >= pattern.getPatternWidth();
+        return rotate ? containerLengthLeft >= pattern.getPatternWidth() : containerLengthLeft >= pattern.getPatternLength();
     }
 
     public float calcAreaEfficiency() {

@@ -151,13 +151,6 @@ public abstract class ProductList{
                 .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
     }
 
-//    public void addIncreasedYFromCenter(long increasingFactor, boolean rotate) {
-//        var lastProductAreaInfo = getLastProductAreaInfo();
-//        boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
-//                .x((int) (this.productInfo.getWidth() / 2))
-//                .y((int) (lastProductAreaInfo.getCenter().getY() + increasingFactor))
-//                .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
-//    }
     public void addIncreasedYFromCenter(long increasingFactor, boolean rotate) {
         var lastProductAreaInfo = getLastProductAreaInfo();
         boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
@@ -175,27 +168,11 @@ public abstract class ProductList{
                 .z((int) (productInfo.getHeight() / 2)).build(), rotate));
     }
 
-    public void addIncreasedXYFromOriginFromIthProduct(long ith, long xIncreasingFactor, long yIncreasingFactor, boolean rotate) {
-        var lastProductAreaInfo = getProductAreaInfo((int) (getMap().size() - ith));
-        boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
-                .x((int) (lastProductAreaInfo.getOrigin().getX() + xIncreasingFactor))
-                .y((int) (lastProductAreaInfo.getOrigin().getY() + yIncreasingFactor))
-                .z((int) (productInfo.getHeight() / 2)).build(), rotate));
-    }
-
     public void addYFromIthProductCenter(long ith, long increasingFactor, boolean rotate) {
         var lastProductAreaInfo = getProductAreaInfo((int) (ith));
         boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
                 .x((int) (lastProductAreaInfo.getCenter().getX()))
                 .y((int) (lastProductAreaInfo.getCenter().getY() + increasingFactor))
-                .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
-    }
-
-    public void addProductCenterEnd(long x, long y, boolean rotate) {
-        var lastProductAreaInfo = getLastProductAreaInfo();
-        boolean b = addProductAreaInfo(new ObjectAreaInfo(productInfo, Coordinate.builder()
-                .x((int) (lastProductAreaInfo.getCenter().getX() + x))
-                .y((int) (lastProductAreaInfo.getEnd().getY() + y))
                 .z((int) (lastProductAreaInfo.getCenter().getZ())).build(), rotate));
     }
 

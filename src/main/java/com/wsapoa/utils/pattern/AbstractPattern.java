@@ -49,7 +49,6 @@ public abstract class AbstractPattern extends ReportResult {
 
     //TODO : Update Super in each pattern cto
     //TODO : update ctor to initialize actualPatternLength and width
-
     public AbstractPattern(
             Product product,
             Pallet pallet,
@@ -106,6 +105,7 @@ public abstract class AbstractPattern extends ReportResult {
         return Math.max(actualPatternLength, totalPatternLength);
     }
 
+    //TODO : Bug, when actualPatternVolume is greater than totalPatternVolume it should return ActualPatternVolume
     public float getPatterVolume(){
         return Math.min(actualPatternVolume, calcTotalPatternVolume());
     }
