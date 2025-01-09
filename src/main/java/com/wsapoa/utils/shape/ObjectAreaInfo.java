@@ -5,7 +5,7 @@ import com.wsapoa.entity.Product;
 import com.wsapoa.entity.ReportResultProduct;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 /**
  * Class for ObjectAreaInfo treat the information of the dimension related values of the product
