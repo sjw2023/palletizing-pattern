@@ -7,7 +7,7 @@ import com.wsapoa.utils.shape.ObjectAreaInfo;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 

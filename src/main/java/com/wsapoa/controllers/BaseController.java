@@ -4,7 +4,7 @@ import com.wsapoa.services.BaseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid; // For Java 11 and above
 import java.util.List;
 //TODO : Have end-points to return DTO as its response
 public abstract class BaseController<T, ID, DTO> {

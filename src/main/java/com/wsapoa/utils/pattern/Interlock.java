@@ -3,7 +3,7 @@ package com.wsapoa.utils.pattern;
 import com.wsapoa.entity.*;
 import com.wsapoa.utils.container.InterlockProductList;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import java.util.List;
 
 /**
