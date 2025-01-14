@@ -2,8 +2,8 @@ package com.wsapoa.utils.pattern;
 
 import com.wsapoa.entity.*;
 import com.wsapoa.utils.container.InterlockProductList;
+import org.antlr.v4.runtime.misc.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
