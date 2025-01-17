@@ -12,7 +12,6 @@ pipeline{
                 echo 'Deploying the project...'
             }
 
-
         }
     }
 }
