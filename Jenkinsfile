@@ -3,7 +3,7 @@ pipeline{
     stages{
         stage('Build'){
             steps{
-                gradle 'build'
+                sh(script: 'gradle build')
                 echo 'Building the project...'
             }
         }
