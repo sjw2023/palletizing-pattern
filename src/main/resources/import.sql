@@ -1,5 +1,5 @@
 -- Containers table
-CREATE TABLE wsa_poa.containers (
+CREATE TABLE test_database.containers (
                                     container_id INT PRIMARY KEY,
                                     container_volume BIGINT,  -- Using BIGINT due to large values like 67431541296
                                     height INT,
@@ -10,7 +10,7 @@ CREATE TABLE wsa_poa.containers (
 );
 
 -- Products table
-CREATE TABLE wsa_poa.products (
+CREATE TABLE test_database.products (
                                   product_id INT PRIMARY KEY,
                                   product_volume BIGINT,  -- Using BIGINT for consistency with containers
                                   height INT,
@@ -21,7 +21,7 @@ CREATE TABLE wsa_poa.products (
 );
 
 -- Patterns table
-CREATE TABLE wsa_poa.patterns (
+CREATE TABLE test_database.patterns (
                                   pattern_id INT PRIMARY KEY,
                                   pattern_volume BIGINT,
                                   height INT,
@@ -32,7 +32,7 @@ CREATE TABLE wsa_poa.patterns (
 );
 
 -- Pallets table
-CREATE TABLE wsa_poa.pallets (
+CREATE TABLE test_database.pallets (
                                  pallet_id INT PRIMARY KEY,
                                  height INT,
                                  length INT,
@@ -42,23 +42,23 @@ CREATE TABLE wsa_poa.pallets (
 );
 
 -- Insert data for containers
-INSERT INTO wsa_poa.containers (container_id, container_volume, height, length, name, used, width)
-VALUES (1, 67431541296, 2383, 12031, 'TEST', 1, 2352),
-       (2, 33126117000, 2390, 5898, 'DRY CONTAINER - 20 FEET', 1, 2350),
-       (3, 67577728000, 2390, 12032, 'DRY CONTAINER - 40 FEET', 1, 2350),
-       (4, 76201664000, 2695, 12032, 'DRY CONTAINER - 40 FEET HIGH CUBE', 1, 2350),
-       (5, 85990371264, 2697, 13556, 'DRY CONTAINER - 45 FEET', 1, 2352);
+INSERT INTO test_database.containers (container_id, container_volume, height, length, name, used, width)
+VALUES (1, 67431541296, 2383, 12031, 'TEST', true, 2352),
+       (2, 33126117000, 2390, 5898, 'DRY CONTAINER - 20 FEET', true, 2350),
+       (3, 67577728000, 2390, 12032, 'DRY CONTAINER - 40 FEET', true, 2350),
+       (4, 76201664000, 2695, 12032, 'DRY CONTAINER - 40 FEET HIGH CUBE', true, 2350),
+       (5, 85990371264, 2697, 13556, 'DRY CONTAINER - 45 FEET', true, 2352);
 
 -- Insert data for products
-INSERT INTO wsa_poa.products (used, height, length, product_id, product_volume, width, name)
-VALUES (1, 200, 400, 1, 24000000, 300, 'test');
+INSERT INTO test_database.products (used, height, length, product_id, product_volume, width, name)
+VALUES (true, 200, 400, 1, 24000000, 300, 'test');
 
 -- Insert data for patterns
-INSERT INTO wsa_poa.patterns (used, height, length, pattern_id, pattern_volume, width, name)
-VALUES (1, 2352, 1, 1, 1, 1, '1');
+INSERT INTO test_database.patterns (used, height, length, pattern_id, pattern_volume, width, name)
+VALUES (true, 2352, 1, 1, 1, 1, '1');
 
 -- Insert data for pallets
-INSERT INTO wsa_poa.pallets (used, height, length, pallet_id, width, name)
-VALUES (1, 150, 1200, 1, 1000, 'test'),
-       (1, 150, 1100, 2, 1100, 'test2'),
-       (1, 150, 1200, 3, 1100, 'test3');
+INSERT INTO test_database.pallets (used, height, length, pallet_id, width, name)
+VALUES (true, 150, 1200, 1, 1000, 'test'),
+       (true, 150, 1100, 2, 1100, 'test2'),
+       (true, 150, 1200, 3, 1100, 'test3');
